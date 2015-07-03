@@ -99,7 +99,7 @@
             </plugin>
             <plugin>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>maven-wsdl2java-plugin</artifactId>
+                <artifactId>wsdl2java-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <executions>
                     <execution>

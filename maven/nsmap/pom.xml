@@ -28,7 +28,7 @@
     <artifactId>nsmap</artifactId>
     <name>Maven plugin common classes</name>
     <description>
-    	Contains classes shared by maven-wsdl2java-plugin and maven-java2wsdl-plugin.
+    	Contains classes shared by wsdl2java-maven-plugin and java2wsdl-maven-plugin.
     </description>
     <build>
         <plugins>

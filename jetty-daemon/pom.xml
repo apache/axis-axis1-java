@@ -28,7 +28,7 @@
     <artifactId>jetty-daemon</artifactId>
     <name>Jetty Daemon</name>
     <description>
-        Daemon implementation used by maven-axis-server-plugin to launch a Jetty server in a separate JVM.
+        Daemon implementation used by axis-server-maven-plugin to launch a Jetty server in a separate JVM.
     </description>
     <dependencies>
         <dependency>

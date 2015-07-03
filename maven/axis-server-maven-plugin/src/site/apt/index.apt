@@ -1,0 +1,38 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements. See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership. The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License. You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied. See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+           ------------
+           Introduction
+           ------------
+
+axis-server-maven-plugin
+
+  The purpose of the axis-server-maven-plugin is to automatically start and stop a stand-alone Axis server (and other processes)
+  during integration test phases of a Maven project. This enables end-to-end automation of integration tests.
+
+* Goals Overview
+
+  The plugin has the following goals:
+
+  * {{{./start-server-mojo.html}axis-server:start-server}} starts a stand-alone Axis server instance in a separate JVM during
+    the <<<pre-integration-test>>> phase. It also deploys Web services on that instance.
+  
+  * {{{./start-process-mojo.html}axis-server:start-process}} starts an arbitrary process during the <<<pre-integration-test>>>
+    phase. This can e.g. be used to start a mock Web service.
+  
+  * {{{./stop-all-mojo.html}axis-server:stop-all}} stops all processes started by <<<axis-server:start-server>>> and
+    <<<axis-server:start-process>>>. It is executed during the <<<post-integration-test>>> phase.

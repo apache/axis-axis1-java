@@ -83,7 +83,7 @@
             </plugin>
             <plugin>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>maven-axis-server-plugin</artifactId>
+                <artifactId>axis-server-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <executions>
                     <execution>

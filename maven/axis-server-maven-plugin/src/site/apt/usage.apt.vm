@@ -1,0 +1,238 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements. See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership. The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License. You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied. See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+           -----
+           Usage
+           -----
+
+Usage
+
+* Automating tests that require a running Axis server instance
+
+  Test that require a running Axis server instance should be executed in the
+  <<<integration-test>>> phase instead of the <<<test>>> phase. That means that
+  you need to configure an execution of the {{{http://maven.apache.org/plugins/maven-failsafe-plugin}maven-failsafe-plugin}}
+  (we'll see that later) and prevent the {{{http://maven.apache.org/plugins/maven-surefire-plugin}maven-surefire-plugin}}
+  from executing these tests in the <<<test>>> phase. There are several ways
+  this can be done. One is to follow the naming convention recommended by
+  the maven-failsafe-plugin, i.e. to ensure that all integration test cases
+  match one of the following patterns: <<<IT*.java>>>, <<<*IT.java>>> or <<<*ITCase.java>>>.
+  The other option is to completely skip the execution of
+  the maven-surefire-plugin plugin. To do this, add the following configuration
+  to your POM:
+  
+--------------------------------------------------------------------------------
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+--------------------------------------------------------------------------------
+
+  The Axis server needs to listen on a TCP port to receive HTTP requests.
+  When using a continuous integration tool, it is important to ensure that builds
+  (of different projects or different branches of the same project) can be
+  executed concurrently on the same host without interfering with each other.
+  That implies that one should avoid hard coded port numbers and instead allocate
+  ports dynamically during the build. 
+  The <<<reserve-network-port>>> goal of the
+  {{{http://mojo.codehaus.org/build-helper-maven-plugin/}build-helper-maven-plugin}}
+  provides the necessary feature to achieve this:
+
+--------------------------------------------------------------------------------
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>reserve-network-port</id>
+                        <goals>
+                            <goal>reserve-network-port</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <portNames>
+                                <portName>axisServerPort</portName>
+                            </portNames>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+--------------------------------------------------------------------------------
+
+  This execution will allocate a TCP port and store the port number in the
+  <<<axisServerPort>>> property for later use. We are now ready to configure
+  the Axis server instance:
+
+--------------------------------------------------------------------------------
+            <plugin>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>axis-server-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>start-server</id>
+                        <goals>
+                            <goal>start-server</goal>
+                        </goals>
+                        <configuration>
+                            <port>${axisServerPort}</port>
+                            <wsdds>
+                                <wsdd>
+                                    <directory>${project.build.directory}/wsdd</directory>
+                                </wsdd>
+                            </wsdds>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-server</id>
+                        <goals>
+                            <goal>stop-all</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+--------------------------------------------------------------------------------
+
+  Note the reference to the <<<axisServerPort>>> property set by the build-helper-maven-plugin.
+  Also note the <<<wsdds>>> option that specifies the location of the WSDD files for the
+  Web services to deploy. These files are typically generated using the
+  {{{../wsdl2java/index.html}wsdl2java-maven-plugin}}.
+  
+  The axis-server-maven-plugin assumes that <<<org.apache.axis.server.standalone.StandaloneAxisServer>>> class
+  (not to be confused with the old <<<org.apache.axis.transport.http.SimpleAxisServer>>> class)
+  is in the class path. Therefore, you need to add the relevant dependency to your project:
+  
+--------------------------------------------------------------------------------
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis-standalone-server</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+--------------------------------------------------------------------------------
+  
+  Obviously the integration tests also need to know the port number of the
+  Axis server. The easiest way is to provide that information using a system
+  property, as shown in the following sample configuration for the maven-failsafe-plugin:
+
+--------------------------------------------------------------------------------
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+                            <systemPropertyVariables>
+                                <axisServerPort>${axisServerPort}</axisServerPort>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+--------------------------------------------------------------------------------
+
+* Running integration tests manually in an IDE
+
+  The approach described in the previous section is designed to automatically execute
+  integration tests during the Maven build. However, from time to time you may want
+  to execute some of these tests manually in your favorite IDE, for debugging purposes or to
+  develop new test cases. With most modern IDEs, running a test case is easy; the tricky part is
+  to start the Axis server instance with which these test cases will interact.
+  Obviously you could set up the Axis server manually, but this is time consuming
+  and doesn't allow you to leverage all the effort you put into setting up your
+  Maven project. Instead it would be much simpler if you could just run the Maven build
+  and suspend the execution of the build after the execution of the <<<start-server>>> goal.
+  This would give you a fully configured Axis server instance that you can use to execute
+  the test cases from within your IDE.
+  
+  This use case is supported by the <<<start-server>>> goal. Simply set the
+  <<<axis.server.foreground>>> property on the command line:
+
+--------------------------------------------------------------------------------
+mvn clean integration-test -Daxis.server.foreground=true
+--------------------------------------------------------------------------------
+
+  If you configured your Maven project following the best practices described in the
+  previous section, then this will still start the Axis server on a dynamically allocated
+  port. This is undesirable because you would have to configure your IDE to
+  pass the relevant system property (<<<axisServerPort>>> in the sample configuration)
+  to your test cases, and in addition you would have to constantly update that
+  configuration because the port number changes every time you restart the Axis server.
+  You have two options to avoid this. One is to override the port number on the command line:
+
+--------------------------------------------------------------------------------
+mvn clean integration-test -Daxis.server.foreground=true -DaxisServerPort=8080
+--------------------------------------------------------------------------------
+
+  The other option is to add a <<<foregroundPort>>> property with the port number
+  to the configuration of the <<<start-server>>> goal:
+
+--------------------------------------------------------------------------------
+            <plugin>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>axis-server-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>start-server</id>
+                        <goals>
+                            <goal>start-server</goal>
+                        </goals>
+                        <configuration>
+                            <port>${axisServerPort}</port>
+                            <foregroundPort>8080</foregroundPort>
+                            ...
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-server</id>
+                        <goals>
+                            <goal>stop-all</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+--------------------------------------------------------------------------------
+
+  If you now run the <<<start-server>>> goal in foreground mode, it will automatically
+  choose the alternate port number you have specified.
+  
+  In addition to that configuration you should also write your integration test cases
+  such that they fall back to the specified port number if the relevant system property
+  is not set. For the sample configuration used here, that means that to determine the
+  port number, the following code should be used:
+
+--------------------------------------------------------------------------------
+System.getProperty("axisServerPort", "8080")
+--------------------------------------------------------------------------------
+
+  If you set up your project like that, then no additional configuration is required
+  in your IDE and you only need to pass the <<<axis.server.foreground>>> property
+  to Maven.

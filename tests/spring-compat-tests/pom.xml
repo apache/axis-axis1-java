@@ -54,7 +54,7 @@
         <plugins>
             <plugin>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>maven-wsdl2java-plugin</artifactId>
+                <artifactId>wsdl2java-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <executions>
                     <execution>
@@ -74,7 +74,7 @@
             </plugin>
             <plugin>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>maven-wsdd-plugin</artifactId>
+                <artifactId>wsdd-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <executions>
                     <execution>
@@ -112,7 +112,7 @@
             </plugin>
             <plugin>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>maven-axis-server-plugin</artifactId>
+                <artifactId>axis-server-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <executions>
                     <execution>

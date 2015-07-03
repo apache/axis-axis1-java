@@ -21,30 +21,40 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis</groupId>
-        <artifactId>axis-project</artifactId>
+        <artifactId>maven</artifactId>
         <version>1.4.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>daemon-launcher</artifactId>
-    <name>Daemon Launcher</name>
+    <artifactId>wsdd-maven-plugin</artifactId>
+    <packaging>maven-plugin</packaging>
+    <name>wsdd-maven-plugin</name>
     <description>
-        Used by axis-server-maven-plugin to launch a Commons Daemon implementation.
+        Maven plugin to process WSDD files.
     </description>
+    <url>${baseUrl}/maven/wsdd</url>
+    <distributionManagement>
+        <site>
+            <id>axis</id>
+            <url>${baseSiteUrl}/maven/wsdd</url>
+        </site>
+    </distributionManagement>
     <dependencies>
         <dependency>
-            <groupId>commons-daemon</groupId>
-            <artifactId>commons-daemon</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-project</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.veithen.ulog</groupId>
+            <artifactId>ulog</artifactId>
         </dependency>
     </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-site-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                    <skipDeploy>true</skipDeploy>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

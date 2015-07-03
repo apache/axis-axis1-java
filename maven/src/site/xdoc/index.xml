@@ -45,22 +45,22 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><a href="wsdl2java/index.html">maven-wsdl2java-plugin</a></td>
+                        <td><a href="wsdl2java/index.html">wsdl2java-maven-plugin</a></td>
                         <td>Generates Java artifacts from a WSDL file</td>
                         <td><a href="../ant/axis-wsdl2java.html">axis-wsdl2java</a></td>
                     </tr>
                     <tr>
-                        <td><a href="java2wsdl/index.html">maven-java2wsdl-plugin</a></td>
+                        <td><a href="java2wsdl/index.html">java2wsdl-maven-plugin</a></td>
                         <td>Generates a WSDL description from a Java class</td>
                         <td><a href="../ant/axis-java2wsdl.html">axis-java2wsdl</a></td>
                     </tr>
                     <tr>
-                        <td><a href="wsdd/index.html">maven-wsdd-plugin</a></td>
+                        <td><a href="wsdd/index.html">wsdd-maven-plugin</a></td>
                         <td></td>
                         <td rowspan="2" style="vertical-align: middle">N/A</td>
                     </tr>
                     <tr>
-                        <td><a href="axis-server/index.html">maven-axis-server-plugin</a></td>
+                        <td><a href="axis-server/index.html">axis-server-maven-plugin</a></td>
                         <td>Starts/stops a stand-alone Axis server</td>
                     </tr>
                 </tbody>

@@ -23,10 +23,10 @@
             <item name="Introduction" href="index.html"/>
         </menu>
         <menu name="Plugins">
-            <item name="maven-wsdl2java-plugin" href="wsdl2java/index.html"/>
-            <item name="maven-java2wsdl-plugin" href="java2wsdl/index.html"/>
-            <item name="maven-wsdd-plugin" href="wsdd/index.html"/>
-            <item name="maven-axis-server-plugin" href="axis-server/index.html"/>
+            <item name="wsdl2java-maven-plugin" href="wsdl2java/index.html"/>
+            <item name="java2wsdl-maven-plugin" href="java2wsdl/index.html"/>
+            <item name="wsdd-maven-plugin" href="wsdd/index.html"/>
+            <item name="axis-server-maven-plugin" href="axis-server/index.html"/>
         </menu>
     </body>
 </project>
