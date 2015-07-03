@@ -31,15 +31,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @phase pre-integration-test
  * @requiresDependencyResolution test
  */
-public class StartWebAppMojo extends AbstractStartDaemonMojo {
-    /**
-     * The HTTP port.
-     * 
-     * @parameter default-value="8080"
-     * @required
-     */
-    private int port;
-
+public class StartWebAppMojo extends AbstractStartWebServerMojo {
     /**
      * 
      * 
@@ -48,7 +40,7 @@ public class StartWebAppMojo extends AbstractStartDaemonMojo {
      */
     private File[] resourceBases;
     
-    protected void doStartDaemon() throws MojoExecutionException, MojoFailureException {
+    protected void doStartDaemon(int port) throws MojoExecutionException, MojoFailureException {
         addAxisDependency("jetty-daemon");
         startDaemon("HTTP server on port " + port, "org.apache.axis.tools.daemon.jetty.WebAppDaemon",
                 new String[] { "-p", String.valueOf(port), "-r", StringUtils.join(resourceBases, File.pathSeparator) }, new File("."));

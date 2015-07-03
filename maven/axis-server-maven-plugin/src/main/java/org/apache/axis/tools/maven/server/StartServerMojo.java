@@ -31,7 +31,6 @@ import org.apache.axis.model.wsdd.Deployment;
 import org.apache.axis.model.wsdd.WSDDUtil;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
@@ -45,21 +44,13 @@ import org.xml.sax.InputSource;
  * @phase pre-integration-test
  * @requiresDependencyResolution test
  */
-public class StartServerMojo extends AbstractStartDaemonMojo {
+public class StartServerMojo extends AbstractStartWebServerMojo {
     /**
      * @parameter default-value="${project.build.directory}/axis-server"
      * @required
      * @readonly
      */
     private File workDirBase;
-    
-    /**
-     * The port of the Axis server.
-     * 
-     * @parameter default-value="8080"
-     * @required
-     */
-    private int port;
     
     /**
      * The maximum number of concurrently active sessions.
@@ -90,43 +81,15 @@ public class StartServerMojo extends AbstractStartDaemonMojo {
      */
     private FileSet[] configs;
     
-    /**
-     * If this flag is set to <code>true</code>, then the execution of the goal will block after the
-     * server has been started and the services are deployed. This is useful if one wants to
-     * manually test some services deployed on the server or if one wants to run the integration
-     * tests from an IDE. The flag should only be set using the command line, but not in the POM.
-     * 
-     * @parameter expression="${axis.server.foreground}" default-value="false"
-     */
-    // Note: this feature is implemented using a flag (instead of a distinct goal) to make sure that
-    // the server is configured in exactly the same way as in a normal integration test execution.
-    private boolean foreground;
-    
-    /**
-     * Specifies an alternate port number that will override {@link #port} if {@link #foreground} is
-     * set to <code>true</code>. This parameter should be used if the port number configured with
-     * the {@link #port} parameter is allocated dynamically. This makes it easier to run integration
-     * tests from an IDE. For more information, see the <a href="usage.html">usage
-     * documentation</a>.
-     * 
-     * @parameter
-     */
-    private int foregroundPort = -1;
-    
-    protected void doStartDaemon() throws MojoExecutionException, MojoFailureException {
-        Log log = getLog();
-        
+    protected void doStartDaemon(int port) throws MojoExecutionException, MojoFailureException {
         // Need to setup additional dependencies before building the default configuration!
         addAxisDependency("axis-standalone-server");
         if (jwsDirs != null && jwsDirs.length > 0) {
             addAxisDependency("axis-rt-jws");
         }
         
-        // Determine the port to be used
-        int actualPort = foreground && foregroundPort != -1 ? foregroundPort : port;
-        
         // Prepare a work directory where we can place the server-config.wsdd file
-        File workDir = new File(workDirBase, String.valueOf(actualPort));
+        File workDir = new File(workDirBase, String.valueOf(port));
         if (workDir.exists()) {
             try {
                 FileUtils.deleteDirectory(workDir);
@@ -198,7 +161,7 @@ public class StartServerMojo extends AbstractStartDaemonMojo {
         // Start the server
         List args = new ArrayList();
         args.add("-p");
-        args.add(String.valueOf(actualPort));
+        args.add(String.valueOf(port));
         args.add("-w");
         args.add(workDir.getAbsolutePath());
         if (jwsDirs != null && jwsDirs.length > 0) {
@@ -209,25 +172,12 @@ public class StartServerMojo extends AbstractStartDaemonMojo {
         args.add(String.valueOf(maxSessions));
         try {
             startDaemon(
-                    "Server on port " + actualPort,
+                    "Server on port " + port,
                     "org.apache.axis.server.standalone.daemon.AxisServerDaemon",
                     (String[])args.toArray(new String[args.size()]),
                     workDir);
         } catch (Exception ex) {
             throw new MojoFailureException("Failed to start server", ex);
-        }
-        
-        if (foreground) {
-            log.info("Server started in foreground mode. Press CRTL-C to stop.");
-            Object lock = new Object();
-            synchronized (lock) {
-                try {
-                    lock.wait();
-                } catch (InterruptedException ex) {
-                    // Set interrupt flag and continue
-                    Thread.currentThread().interrupt();
-                }
-            }
         }
     }
     
