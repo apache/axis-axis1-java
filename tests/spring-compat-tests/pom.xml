@@ -58,7 +58,6 @@
                 <version>${project.version}</version>
                 <executions>
                     <execution>
-                        <id>samples-addr</id>
                         <goals>
                             <goal>generate-sources</goal>
                         </goals>
