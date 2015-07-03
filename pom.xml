@@ -221,7 +221,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.2</version>
+                    <version>3.4</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
@@ -372,7 +372,7 @@
                     <reportPlugins>
                         <plugin>
                             <artifactId>maven-project-info-reports-plugin</artifactId>
-                            <version>2.6</version>
+                            <version>2.8</version>
                             <reports>
                                 <report>index</report>
                                 <report>issue-tracking</report>
@@ -438,7 +438,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.6</version>
+                <version>2.8</version>
                 <reportSets>
                     <reportSet>
                         <reports>
