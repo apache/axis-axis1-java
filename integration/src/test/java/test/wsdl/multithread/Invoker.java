@@ -35,12 +35,15 @@ class Invoker implements Runnable {
     private final CountDownLatch readyLatch;
     private final CountDownLatch startLatch;
     private final Report report;
+    private final int numInvocations;
     
-    Invoker(AddressBook binding, CountDownLatch readyLatch, CountDownLatch startLatch, Report report) {
+    Invoker(AddressBook binding, CountDownLatch readyLatch, CountDownLatch startLatch, Report report,
+            int numInvocations) {
         this.binding = binding;
         this.readyLatch = readyLatch;
         this.startLatch = startLatch;
         this.report = report;
+        this.numInvocations = numInvocations;
     }
 
     public void run() {
@@ -50,7 +53,7 @@ class Invoker implements Runnable {
             readyLatch.countDown();
             startLatch.await();
             
-            for (int i = 0; i < 4; ++i) {
+            for (int i = 0; i < numInvocations; ++i) {
                 Address address = new Address();
                 Phone phone = new Phone();
                 address.setStreetNum(i);

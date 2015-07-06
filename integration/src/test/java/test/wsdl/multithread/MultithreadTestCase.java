@@ -45,17 +45,18 @@ public class MultithreadTestCase extends TestCase {
     
     private void testMultithreading(StubSupplier stubSupplier) throws Throwable {
         Report report = new Report();
-        int NUM_THREADS = 50;
-        CountDownLatch readyLatch = new CountDownLatch(NUM_THREADS);
+        final int numThreads = 50;
+        final int numInvocations = 4;
+        CountDownLatch readyLatch = new CountDownLatch(numThreads);
         CountDownLatch startLatch = new CountDownLatch(1);
-        Thread[] threads = new Thread[NUM_THREADS];
-        for (int i = 0; i < NUM_THREADS; ++i) {
-            threads[i] = new Thread(new Invoker(stubSupplier.getStub(), readyLatch, startLatch, report));
+        Thread[] threads = new Thread[numThreads];
+        for (int i = 0; i < numThreads; ++i) {
+            threads[i] = new Thread(new Invoker(stubSupplier.getStub(), readyLatch, startLatch, report, numInvocations));
             threads[i].start();
         }
         readyLatch.await();
         startLatch.countDown();
-        for (int i = 0; i < NUM_THREADS; ++i) {
+        for (int i = 0; i < numThreads; ++i) {
             threads[i].join(30000);
             StackTraceElement[] stack = threads[i].getStackTrace();
             if (stack.length > 0) {
@@ -68,7 +69,7 @@ public class MultithreadTestCase extends TestCase {
         if (error != null) {
             throw error;
         }
-        assertEquals("number of successes", NUM_THREADS * 4, report.getSuccessCount());
+        assertEquals("number of successes", numThreads * numInvocations, report.getSuccessCount());
     } // testMultithreading
 } // class MultithreadTestCase
 
