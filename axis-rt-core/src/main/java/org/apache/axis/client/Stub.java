@@ -432,11 +432,14 @@ public abstract class Stub implements javax.xml.rpc.Stub {
      * @return
      */
     public Call _createCall() throws ServiceException {
-        _call = (Call) service.createCall();
+        // A single stub instance may be used concurrently by multiple threads; therefore we need
+        // to return the value of the local call variable instead of reading the _call attribute.
+        Call call = (Call) service.createCall();
+        _call = call;
 
         // TODO: There is a lot of code in the generated stubs that
         // can be moved here.
-        return _call;
+        return call;
     }
 
     /**

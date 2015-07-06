@@ -46,7 +46,7 @@ public class MultithreadTestCase extends TestCase {
     private void testMultithreading(StubSupplier stubSupplier) throws Throwable {
         Report report = new Report();
         final int numThreads = 50;
-        final int numInvocations = 4;
+        final int numInvocations = 10;
         CountDownLatch readyLatch = new CountDownLatch(numThreads);
         CountDownLatch startLatch = new CountDownLatch(1);
         Thread[] threads = new Thread[numThreads];
