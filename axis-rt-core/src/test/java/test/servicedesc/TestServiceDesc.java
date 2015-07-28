@@ -15,6 +15,8 @@
  */
 package test.servicedesc;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -30,16 +32,21 @@ public class TestServiceDesc extends TestCase {
 
         desc.loadServiceDescByIntrospection(ServiceClass.class);
 
-        List operations = desc.getOperations();
+        OperationDesc[] operations = (OperationDesc[])desc.getOperations().toArray(new OperationDesc[0]);
+        Arrays.sort(operations, new Comparator() {
+            public int compare(Object o1, Object o2) {
+                return ((OperationDesc)o1).getName().compareTo(((OperationDesc)o2).getName());
+            }
+        });
 
         assertTrue(operations != null);
         assertEquals("invalid number of registered operations",
-                     2, operations.size());
+                     2, operations.length);
         
         OperationDesc operation;
         List faults;
 
-        operation = (OperationDesc)operations.get(0);
+        operation = operations[0];
         assertEquals("doIt1", operation.getName());
 
         faults = operation.getFaults();
@@ -48,7 +55,7 @@ public class TestServiceDesc extends TestCase {
         assertEquals("invalid number of registered faults", 
                      2, faults.size());
 
-        operation = (OperationDesc)operations.get(1);
+        operation = operations[1];
         assertEquals("doIt2", operation.getName());
 
         faults = operation.getFaults();
