@@ -34,7 +34,7 @@ public abstract class SOAPConnectionFactory {
      * @return a new instance of a default <CODE>
      *     SOAPConnectionFactory</CODE> object
      * @throws  SOAPException  if there was an error creating
-     *     the <CODE>SOAPConnectionFactory
+     *     the <CODE>SOAPConnectionFactory</CODE>
      * @throws UnsupportedOperationException  if newInstance is not supported.
      */
     public static SOAPConnectionFactory newInstance()

@@ -154,6 +154,7 @@ public interface SOAPFault extends SOAPBodyElement {
      SOAPConstants.URI_NS_SOAP_ENVELOPE);
      SOAPFault fault = ...;
      fault.setFaultCode(qname);
+     </pre>
      *
      * It is preferable to use this method over setFaultCode(String).
      *

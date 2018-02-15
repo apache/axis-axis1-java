@@ -21,7 +21,7 @@ package javax.xml.soap;
  *   <CODE>String</CODE> that gives the reason for the exception, an
  *   embedded <CODE>Throwable</CODE> object, or both. This class
  *   provides methods for retrieving reason messages and for
- *   retrieving the embedded <CODE>Throwable</CODE> object.</P>
+ *   retrieving the embedded <CODE>Throwable</CODE> object.
  *
  *   <P>Typical reasons for throwing a <CODE>SOAPException</CODE>
  *   object are problems such as difficulty setting a header, not

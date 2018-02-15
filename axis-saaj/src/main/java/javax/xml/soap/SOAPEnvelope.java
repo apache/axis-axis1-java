@@ -26,7 +26,7 @@ package javax.xml.soap;
  *   required, and the <CODE>SOAPHeader</CODE> object, though
  *   optional, is used in the majority of cases. If the <CODE>
  *   SOAPHeader</CODE> object is not needed, it can be deleted,
- *   which is shown later.</P>
+ *   which is shown later.
  *
  *   <P>A client can access the <CODE>SOAPHeader</CODE> and <CODE>
  *   SOAPBody</CODE> objects by calling the methods <CODE>
@@ -35,7 +35,7 @@ package javax.xml.soap;
  *   these two methods after starting with the <CODE>
  *   SOAPMessage</CODE> object <I>message</I> to get the <CODE>
  *   SOAPPart</CODE> object <I>sp</I>, which is then used to get the
- *   <CODE>SOAPEnvelope</CODE> object <I>se</I>.</P>
+ *   <CODE>SOAPEnvelope</CODE> object <I>se</I>.
  * <PRE>
  *    SOAPPart sp = message.getSOAPPart();
  *    SOAPEnvelope se = sp.getEnvelope();
@@ -50,7 +50,7 @@ package javax.xml.soap;
  *   detaches the XML element (node) on which it is called. For
  *   example, the following line of code deletes the <CODE>
  *   SOAPBody</CODE> object that is retrieved by the method <CODE>
- *   getBody</CODE>.</P>
+ *   getBody</CODE>.
  * <PRE>
  *     se.getBody().detachNode();
  * </PRE>
@@ -82,7 +82,7 @@ package javax.xml.soap;
  *   namespace prefix, and the third creates <CODE>Name</CODE>
  *   objects with just a local name. The following line of code, in
  *   which <I>se</I> is a <CODE>SOAPEnvelope</CODE> object, creates
- *   a new <CODE>Name</CODE> object with all three.</P>
+ *   a new <CODE>Name</CODE> object with all three.
  * <PRE>
  *    Name name = se.createName("GetLastTradePrice", "WOMBAT",
  *                               "http://www.wombat.org/trader");

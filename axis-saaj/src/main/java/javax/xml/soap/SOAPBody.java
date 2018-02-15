@@ -81,7 +81,7 @@ public interface SOAPBody extends SOAPElement {
      * @param faultString a <code>String</code> giving an explanation of the
      *              fault
      * @param locale a <code>Locale</code> object indicating the native language
-     *              of the <ocde>faultString</code>
+     *              of the <code>faultString</code>
      * @return the new <code>SOAPFault</code> object
      * @throws SOAPException  if there is a SOAP error
      */

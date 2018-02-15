@@ -21,7 +21,7 @@ import java.util.Vector;
 /**
  * A container for <CODE>MimeHeader</CODE> objects, which
  *   represent the MIME headers present in a MIME part of a
- *   message.</P>
+ *   message.
  *
  *   <P>This class is used primarily when an application wants to
  *   retrieve specific attachments based on certain MIME headers and

@@ -240,7 +240,7 @@ public abstract class SOAPPart implements org.w3c.dom.Document {
     /**
      * Sets the content of the <CODE>SOAPEnvelope</CODE> object
      * with the data from the given <CODE>Source</CODE> object.
-     * @param   source javax.xml.transform.Source</CODE> object with the data to
+     * @param   source <CODE>javax.xml.transform.Source</CODE> object with the data to
      *     be set
      * @throws  SOAPException if there is a problem in
      *     setting the source

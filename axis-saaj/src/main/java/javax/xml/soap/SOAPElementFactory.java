@@ -100,7 +100,7 @@ public class SOAPElementFactory {
      * @return a new instance of a <CODE>
      *     SOAPElementFactory</CODE>
      * @throws  SOAPException if there was an error creating
-     *     the default <CODE>SOAPElementFactory
+     *     the default <CODE>SOAPElementFactory</CODE>
      */
     public static SOAPElementFactory newInstance() throws SOAPException {
 
