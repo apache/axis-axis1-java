@@ -827,7 +827,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     /**
      * Sets the content of the <CODE>SOAPEnvelope</CODE> object
      * with the data from the given <CODE>Source</CODE> object.
-     * @param   source javax.xml.transform.Source</CODE> object with the data to
+     * @param   source <CODE>javax.xml.transform.Source</CODE> object with the data to
      *     be set
      * @throws  SOAPException if there is a problem in
      *     setting the source
@@ -950,7 +950,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      *     current value(s) of the first header that is a match if
      *     there is one. If there is no match, this value will be
      *     the value for a new <CODE>MimeHeader</CODE> object.
-     * @ throws java.lang.IllegalArgumentException if
+     * @throws java.lang.IllegalArgumentException if
      *     there was a problem with the specified mime header name
      *     or value
      * @see #getMimeHeader(java.lang.String) getMimeHeader(java.lang.String)

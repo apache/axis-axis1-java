@@ -21,7 +21,7 @@ import org.apache.axis.utils.Messages;
  * Custom class for supporting XSD data type ID
  * The base type of Id is NCName.
  *
- * @author Eddie Pick <eddie@pick.eu.org>
+ * @author Eddie Pick (eddie@pick.eu.org)
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#ID">XML Schema 3.3.8</a>
  */
 public class Id extends NCName {

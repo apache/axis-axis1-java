@@ -22,7 +22,7 @@ import org.apache.axis.utils.Messages;
 /**
  * Custom class for supporting primitive XSD data type UnsignedInt
  *
- * @author Chris Haddad <chaddad@cobia.net>
+ * @author Chris Haddad (chaddad@cobia.net)
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#unsignedInt">XML Schema 3.3.22</a>
  */
 public class UnsignedInt extends java.lang.Number implements java.lang.Comparable {

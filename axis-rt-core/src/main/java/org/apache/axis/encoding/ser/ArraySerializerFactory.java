@@ -25,7 +25,7 @@ import javax.xml.namespace.QName;
 /**
  * SerializerFactory for arrays
  *
- * @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class ArraySerializerFactory extends BaseSerializerFactory {
     public ArraySerializerFactory() {
@@ -75,7 +75,7 @@ public class ArraySerializerFactory extends BaseSerializerFactory {
         return componentType;
     }
     /**
-     * Obtains a serializer by invoking <constructor>(javaType, xmlType)
+     * Obtains a serializer by invoking &lt;constructor&gt;(javaType, xmlType)
      * on the serClass.
      */
     protected Serializer getGeneralPurpose(String mechanismType)

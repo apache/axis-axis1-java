@@ -55,7 +55,7 @@ public class MapSerializer implements Serializer
     /** Serialize a Map
      *
      * Walk the collection of keys, serializing each key/value pair
-     * inside an <item> element.
+     * inside an &lt;item&gt; element.
      *
      * @param name the desired QName for the element
      * @param attributes the desired attributes for the element

@@ -45,9 +45,9 @@ import java.util.Map;
 /**
  * General purpose deserializer for an arbitrary java bean.
  *
- * @author Sam Ruby <rubys@us.ibm.com>
- * @author Rich Scheuerle <scheu@us.ibm.com>
- * @author Tom Jordahl <tomj@macromedia.com>
+ * @author Sam Ruby (rubys@us.ibm.com)
+ * @author Rich Scheuerle (scheu@us.ibm.com)
+ * @author Tom Jordahl (tomj@macromedia.com)
  */
 public class BeanDeserializer extends DeserializerImpl implements Serializable
 {

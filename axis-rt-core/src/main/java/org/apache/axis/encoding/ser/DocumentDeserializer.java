@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Deserializer for DOM Document
  *
- * @author Davanum Srinivas <dims@yahoo.com>
+ * @author Davanum Srinivas (dims@yahoo.com)
  */
 public class DocumentDeserializer extends DeserializerImpl
 {

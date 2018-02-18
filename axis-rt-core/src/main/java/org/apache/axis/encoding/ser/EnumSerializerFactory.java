@@ -20,7 +20,7 @@ import javax.xml.namespace.QName;
 /**
  * SerializerFactory for Enum
  *
- * @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class EnumSerializerFactory extends BaseSerializerFactory {
     public EnumSerializerFactory(Class javaType, QName xmlType) {

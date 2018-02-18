@@ -34,7 +34,7 @@ import java.net.URL;
 /**
  * This is meant to be used on a SOAP Client to call a SOAP server.
  *
- * @author Sam Ruby <rubys@us.ibm.com>
+ * @author Sam Ruby (rubys@us.ibm.com)
  */
 public class LocalSender extends BasicHandler {
     protected static Log log =

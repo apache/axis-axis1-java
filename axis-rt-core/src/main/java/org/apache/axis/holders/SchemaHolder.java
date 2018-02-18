@@ -19,7 +19,7 @@ package org.apache.axis.holders;
 /**
  * Custom class for supporting XSD schema
  * 
- * @author Davanum Srinivas <dims@yahoo.com>
+ * @author Davanum Srinivas (dims@yahoo.com)
  */
 public final class SchemaHolder implements javax.xml.rpc.holders.Holder {
     public org.apache.axis.types.Schema value;

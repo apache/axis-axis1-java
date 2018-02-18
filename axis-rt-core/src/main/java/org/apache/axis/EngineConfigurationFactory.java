@@ -27,7 +27,7 @@ package org.apache.axis;
  *     //If a factory cannot be created, return 'null'.
  *     //
  *     //The factory may return non-NULL only if:
- *     //  - it knows what to do with the param (check type & process value)
+ *     //  - it knows what to do with the param (check type &amp; process value)
  *     //  - it can find it's configuration information
  *     //
  *     //@see org.apache.axis.configuration.EngineConfigurationFactoryFinder

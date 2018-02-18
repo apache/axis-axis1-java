@@ -34,7 +34,7 @@ import java.util.Vector;
 /**
  * Base class for Axis Serialization Factory classes for code reuse
  *
- * @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public abstract class BaseSerializerFactory extends BaseFactory
     implements SerializerFactory {
@@ -111,7 +111,7 @@ public abstract class BaseSerializerFactory extends BaseFactory
     }
     
     /**
-     * Obtains a serializer by invoking <constructor>(javaType, xmlType) 
+     * Obtains a serializer by invoking &lt;constructor&gt;(javaType, xmlType) 
      * on the serClass.
      */
     protected Serializer getGeneralPurpose(String mechanismType) {
@@ -217,8 +217,8 @@ public abstract class BaseSerializerFactory extends BaseFactory
      * Utility method that intospects on a factory class to decide how to 
      * create the factory.  Tries in the following order:
      * public static create(Class javaType, QName xmlType)
-     * public <constructor>(Class javaType, QName xmlType)
-     * public <constructor>()
+     * public &lt;constructor&gt;(Class javaType, QName xmlType)
+     * public &lt;constructor&gt;()
      * @param factory class
      * @param xmlType
      * @param javaType

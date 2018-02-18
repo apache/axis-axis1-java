@@ -66,7 +66,7 @@ public class ArrayDeserializer extends DeserializerImpl
 
     /**
      * This method is invoked after startElement when the element requires
-     * deserialization (i.e. the element is not an href & the value is not nil)
+     * deserialization (i.e. the element is not an href &amp; the value is not nil)
      * DeserializerImpl provides default behavior, which simply
      * involves obtaining a correct Deserializer and plugging its handler.
      * @param namespace is the namespace of the element

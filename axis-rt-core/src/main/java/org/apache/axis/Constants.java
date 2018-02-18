@@ -644,7 +644,7 @@ public class Constants {
 
     /**
      * QName of exception Name element in an axis fault detail.
-     * Do not use - this is for pre-1.0 server->client exceptions.
+     * Do not use - this is for pre-1.0 server-&gt;client exceptions.
      */
     public static final QName QNAME_FAULTDETAIL_EXCEPTIONNAME = new QName(NS_URI_AXIS, "exceptionName");
 

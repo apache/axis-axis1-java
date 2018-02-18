@@ -171,6 +171,16 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <sourceFileExcludes>
+                        <sourceFileExclude>org/apache/axis/components/image/JimiIO.java</sourceFileExclude>
+                        <sourceFileExclude>org/apache/axis/components/net/IBM*.java</sourceFileExclude>
+                        <sourceFileExclude>org/apache/axis/providers/ComProvider.java</sourceFileExclude>
+                    </sourceFileExcludes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <includes>

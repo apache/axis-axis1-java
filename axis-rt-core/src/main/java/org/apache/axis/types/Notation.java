@@ -24,7 +24,7 @@ import org.apache.axis.description.TypeDesc;
 /**
  * Custom class for supporting XSD data type NOTATION.
  *
- * @author Davanum Srinivas <dims@yahoo.com>
+ * @author Davanum Srinivas (dims@yahoo.com)
  * @see <a href="http://www.w3.org/TR/xmlschema-1/#element-notation">XML Schema Part 1: 3.12 Notation Declarations</a>
  */
 

@@ -21,7 +21,7 @@ package org.apache.axis.encoding.ser;
 /**
  * SerializerFactory for DOM Document
  *
- * @author Davanum Srinivas <dims@yahoo.com>
+ * @author Davanum Srinivas (dims@yahoo.com)
  */
 public class DocumentSerializerFactory extends BaseSerializerFactory {
     public DocumentSerializerFactory() {

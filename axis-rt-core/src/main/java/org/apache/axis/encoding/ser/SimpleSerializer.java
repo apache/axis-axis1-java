@@ -38,7 +38,7 @@ import java.io.IOException;
 /**
  * Serializer for primitives and anything simple whose value is obtained with toString()
  *
- * @author Rich Scheuerle <dims@yahoo.com>
+ * @author Rich Scheuerle (dims@yahoo.com)
  */
 public class SimpleSerializer implements SimpleValueSerializer {
     public QName xmlType;

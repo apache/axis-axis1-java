@@ -28,8 +28,8 @@ import org.apache.axis.utils.ClassUtils;
  * cache for performance reasons.
  * This class is a singleton - so use getInstance to get an instance of it.
  *
- * @author Davanum Srinivas <dims@yahoo.com>
- * @author Sebastian Dietrich <sebastian.dietrich@anecon.com>
+ * @author Davanum Srinivas (dims@yahoo.com)
+ * @author Sebastian Dietrich (sebastian.dietrich@anecon.com)
  */
 public class MethodCache {
     /**

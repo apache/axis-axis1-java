@@ -23,7 +23,7 @@ import java.io.Serializable;
 /**
  * A simple cache of previously loaded classes, and their methods.
  *
- * @author Sam Ruby <rubys@us.ibm.com>
+ * @author Sam Ruby (rubys@us.ibm.com)
  */
 public class JavaClass implements Serializable {
 

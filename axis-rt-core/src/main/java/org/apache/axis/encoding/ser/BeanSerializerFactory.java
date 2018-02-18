@@ -30,7 +30,7 @@ import javax.xml.rpc.JAXRPCException;
 /**
  * SerializerFactory for Bean
  *
- * @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class BeanSerializerFactory extends BaseSerializerFactory {
 

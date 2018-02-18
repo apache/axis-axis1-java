@@ -34,7 +34,7 @@ import java.util.Vector;
  * Deserializer for SOAP Vectors for compatibility with SOAP 2.2.
  *
  * @author Carsten Ziegeler (cziegeler@apache.org)
- * Modified by @author Rich scheuerle <scheu@us.ibm.com>
+ * Modified by @author Rich scheuerle (scheu@us.ibm.com)
  */
 public class VectorDeserializer extends DeserializerImpl
 {

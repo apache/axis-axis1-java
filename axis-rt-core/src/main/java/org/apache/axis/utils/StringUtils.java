@@ -387,7 +387,7 @@ public class StringUtils {
      * <p>Unescapes numeric character referencs found in the <code>String</code>.</p>
      *
      * <p>For example, it will return a unicode string which means the specified numeric
-     *    character references looks like "&#x3088;&#x3046;&#x3053;&#x305d;".</p>
+     *    character references looks like "&amp;#x3088;&amp;#x3046;&amp;#x3053;&amp;#x305d;".</p>
      * 
      * @param str  the <code>String</code> to unescape, may be null
      * @return a new unescaped <code>String</code>, <code>null</code> if null string input
@@ -412,7 +412,7 @@ public class StringUtils {
      * <code>Writer</code>.</p>
      *
      * <p>For example, it will return a unicode string which means the specified numeric
-     *    character references looks like "&#x3088;&#x3046;&#x3053;&#x305d;".</p>
+     *    character references looks like "&amp;#x3088;&amp;#x3046;&amp;#x3053;&amp;#x305d;".</p>
      * 
      * <p>A <code>null</code> string input has no effect.</p>
      * 

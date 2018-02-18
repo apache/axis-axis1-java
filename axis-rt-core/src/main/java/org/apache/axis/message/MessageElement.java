@@ -68,8 +68,8 @@ import java.util.Vector;
  *
  * Note: it was made Serializable to help users of Apache SOAP who had
  * exploited the serializability of the DOM tree to migrate to Axis.
- * @todo implement the NodeList methods properly, with tests. 
  */
+// TODO: implement the NodeList methods properly, with tests. 
 public class MessageElement extends NodeImpl implements SOAPElement,
         Serializable,
         org.w3c.dom.NodeList,  // ADD Nodelist Interfaces for SAAJ 1.2
@@ -378,7 +378,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
 
     /**
      * get the attributes
-     * @return attributes. If this equals {@link NullAttributes.singleton} it is null
+     * @return attributes. If this equals {@link NullAttributes#singleton} it is null
      *
      */
     public Attributes getAttributesEx() { return attributes; }
@@ -1283,9 +1283,9 @@ public class MessageElement extends NodeImpl implements SOAPElement,
     /**
      * add a new namespace/prefix mapping
      * @param map new mapping to add
-     * @todo: this code does not verify that the mapping does not exist already; it
-     * is possible to create duplicate mappings.
      */
+    // TODO: this code does not verify that the mapping does not exist already; it
+    // is possible to create duplicate mappings.
     public void addMapping(Mapping map) {
         if (namespaces == null) {
             namespaces = new ArrayList();
@@ -1421,11 +1421,11 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      * @param uri
      * @return
      * @throws SOAPException for any {@link RuntimeException} caught
-     * @todo for some reason this logic catches all rutime exceptions and
-     * rethrows them as SOAPExceptions. This is unusual behavio, and should
-     * be looked at closely.
      * @see javax.xml.soap.SOAPElement#addNamespaceDeclaration(String, String)
      */
+    // TODO: for some reason this logic catches all rutime exceptions and
+    // rethrows them as SOAPExceptions. This is unusual behavio, and should
+    // be looked at closely.
     public SOAPElement addNamespaceDeclaration(String prefix,
                                                String uri)
         throws SOAPException {
@@ -1741,10 +1741,10 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      * @see org.w3c.dom.Element#getAttributeNode(String)
      * @param attrName
      * @return null, always.
-     * @todo Fix this for SAAJ 1.2 Implementation. marked as deprecated to warn people
-     * it is broken
      * @deprecated this is not implemented
      */
+    // TODO: Fix this for SAAJ 1.2 Implementation. marked as deprecated to warn people
+    // it is broken
     public Attr getAttributeNode(String attrName) {
         return null;
     }
@@ -1769,8 +1769,8 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      * @return newAttr
      * @throws DOMException
      * @deprecated this is not implemented
-     * @todo implement
      */
+    // TODO: implement
     public Attr setAttributeNode(Attr newAttr) throws DOMException {
         return newAttr;
     }
@@ -1778,11 +1778,11 @@ public class MessageElement extends NodeImpl implements SOAPElement,
     /**
      * set an attribute as a node
      * @see org.w3c.dom.Element#setAttributeNodeNS(org.w3c.dom.Attr)
-     * @todo implement properly.
      * @param newAttr
      * @return null
      * @throws DOMException
      */
+    // TODO: implement properly.
     public Attr setAttributeNodeNS(Attr newAttr) throws DOMException {
         //attributes.
         AttributesImpl attributes = makeAttributesEditable();
@@ -1826,8 +1826,8 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      * @param namespaceURI namespace
      * @param localName name
      * @return string value or null if not found
-     * @todo: this could be refactored to use getAttributeValue()
      */
+    // TODO: this could be refactored to use getAttributeValue()
     public String getAttributeNS(String namespaceURI, String localName) {
     	if(namespaceURI == null) {
     		namespaceURI = "";

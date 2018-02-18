@@ -36,9 +36,9 @@ import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Serializer for 
- * <xsd:simpleType ...>
- *   <xsd:list itemType="...">
- * </xsd:simpleType>
+ * &lt;xsd:simpleType ...&gt;
+ *   &lt;xsd:list itemType="..."&gt;
+ * &lt;/xsd:simpleType&gt;
  * based on SimpleSerializer
  *
  * @author Ias <iasandcb@tmax.co.kr>

@@ -117,7 +117,7 @@ public class AxisServletBase extends HttpServlet {
      * Destroy method is called when the servlet is going away.  Pass this
      * down to the AxisEngine to let it clean up...  But don't create the
      * engine if it hasn't already been created.
-     * @todo Fixme for multiple servlets.
+     * TODO: Fixme for multiple servlets.
      * This has always been slightly broken
      * (the context's copy stayed around), but now we have extracted it into
      * a superclass it is blatantly broken.
@@ -155,7 +155,7 @@ public class AxisServletBase extends HttpServlet {
     /**
      * This is a uniform method of initializing AxisServer in a servlet
      * context.
-     * @todo add catch for not being able to cast the context attr to an
+     * TODO: add catch for not being able to cast the context attr to an
      * engine and reinit the engine if so.
      */
     public static AxisServer getEngine(HttpServlet servlet) throws AxisFault

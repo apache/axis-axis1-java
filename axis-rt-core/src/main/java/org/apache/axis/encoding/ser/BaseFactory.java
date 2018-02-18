@@ -25,7 +25,7 @@ import org.apache.axis.utils.cache.MethodCache;
  * Base Factory for BaseDeserializerFactory and BaseSerializerFactory.
  * Code Reuse for the method cache
  * 
- * @author Davanum Srinivas <dims@yahoo.com> 
+ * @author Davanum Srinivas (dims@yahoo.com) 
  */
 public abstract class BaseFactory {
 

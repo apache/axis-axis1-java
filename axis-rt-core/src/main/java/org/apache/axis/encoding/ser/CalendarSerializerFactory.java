@@ -20,7 +20,7 @@ import javax.xml.namespace.QName;
 /**
  * SerializerFactory for Calendar(dateTime) primitives
  *
- * @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class CalendarSerializerFactory extends BaseSerializerFactory {
     public CalendarSerializerFactory(Class javaType, QName xmlType) {

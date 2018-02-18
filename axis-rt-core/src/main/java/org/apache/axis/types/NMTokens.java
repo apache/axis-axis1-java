@@ -23,7 +23,7 @@ import java.util.StringTokenizer;
 /**
  * Custom class for supporting XSD data type NMTokens
  *
- * @author Davanum Srinivas <dims@yahoo.com>
+ * @author Davanum Srinivas (dims@yahoo.com)
  */
 public class NMTokens extends NCName {
     private NMToken[] tokens;

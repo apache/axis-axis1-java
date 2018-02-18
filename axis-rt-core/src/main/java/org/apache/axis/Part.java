@@ -32,7 +32,6 @@ public interface Part extends java.io.Serializable
      *     "Content-Type"
      * @return a <CODE>String</CODE> array giving all the values for
      *     the specified header
-     * @see #setMimeHeader(java.lang.String, java.lang.String) setMimeHeader(java.lang.String, java.lang.String)
      */
     public String[] getMimeHeader(String name);
 

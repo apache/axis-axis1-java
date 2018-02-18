@@ -32,7 +32,7 @@ import java.io.IOException;
  * Serializer for DOM elements
  *
  * @author Glen Daniels (gdaniels@apache.org)
- * Modified by @author Rich scheuerle <scheu@us.ibm.com>
+ * Modified by @author Rich scheuerle (scheu@us.ibm.com)
  */
 
 public class ElementSerializer implements Serializer {

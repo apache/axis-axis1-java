@@ -27,7 +27,7 @@ import javax.xml.namespace.QName;
 public class BackslashUtil implements java.io.Serializable {
 
    /** 
-     * @param QName[local] that may contain unescaped backslashes
+     * @param suspectQName QName[local] that may contain unescaped backslashes
      * @return QName[local] w/ no backslashes
      */
 	
@@ -40,7 +40,7 @@ public class BackslashUtil implements java.io.Serializable {
 	}
 
    /** 
-     * @param QName[local] which may contain unescaped backslashes
+     * @param suspectQName QName[local] which may contain unescaped backslashes
      * @return QName[local] w/ escaped backslashes
      */
 	

@@ -63,11 +63,6 @@ import org.w3c.dom.Element;
  * To change the location of the services, change url-pattern in web.xml and
  * set parameter axis.servicesPath in server-config.wsdd. For more information see
  * <a href="http://ws.apache.org/axis/java/reference.html">Axis Reference Guide</a>.
- *
- * @web.servlet name="AxisServlet"  display-name="Apache-Axis Servlet"
- * @web.servlet-mapping url-pattern="/servlet/AxisServlet"
- * @web.servlet-mapping url-pattern="*.jws"
- * @web.servlet-mapping url-pattern="/services/*"
   */
 public class AxisServlet extends AxisServletBase {
     protected static Log log =

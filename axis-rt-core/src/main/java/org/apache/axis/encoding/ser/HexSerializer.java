@@ -30,8 +30,8 @@ import java.io.IOException;
 /**
  * Serializer for hexBinary.
  *
- * @author Davanum Srinivas <dims@yahoo.com>
- * Modified by @author Rich scheuerle <scheu@us.ibm.com>
+ * @author Davanum Srinivas (dims@yahoo.com)
+ * Modified by @author Rich scheuerle (scheu@us.ibm.com)
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#hexBinary">XML Schema 3.2.16</a>
  */
 public class HexSerializer implements SimpleValueSerializer {

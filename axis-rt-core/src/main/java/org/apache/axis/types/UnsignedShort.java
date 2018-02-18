@@ -20,7 +20,7 @@ import org.apache.axis.utils.Messages;
 /**
  * Custom class for supporting primitive XSD data type UnsignedShort
  *
- * @author Chris Haddad <chaddad@cobia.net>
+ * @author Chris Haddad (chaddad@cobia.net)
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#unsignedShort">XML Schema 3.3.23</a>
  */
 public class UnsignedShort extends UnsignedInt {

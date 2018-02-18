@@ -44,9 +44,9 @@ import javax.xml.soap.SOAPException;
  * SOAPDcoumentImpl implements the Document API for SOAPPART. At the moment, it
  * again delgate the XERCES DOM Implementation Here is my argument on it: I
  * guess that there is 3 way to implement this. - fully implement the DOM API
- * here myself. => This is too much and duplicated work. - extends XERCES
- * Implementation => this makes we are fixed to one Implementation - choose
- * delgate depends on the user's parser preference => This is the practically
+ * here myself. =&gt; This is too much and duplicated work. - extends XERCES
+ * Implementation =&gt; this makes we are fixed to one Implementation - choose
+ * delgate depends on the user's parser preference =&gt; This is the practically
  * best solution I have now
  * 
  * @author Heejune Ahn (cityboy@tmax.co.kr)
@@ -75,7 +75,7 @@ implements org.w3c.dom.Document, java.io.Serializable {
     }
 
     /**
-     * @todo : link with SOAP
+     * TODO: link with SOAP
      * 
      * @return
      */
@@ -100,7 +100,7 @@ implements org.w3c.dom.Document, java.io.Serializable {
      * based on the tagName, we will make different kind SOAP Elements Instance
      * Is really we can determine the Type by the Tagname???
      * 
-     * @todo : verify this method
+     * TODO: verify this method
      * 
      * @param tagName
      * @return @throws
@@ -147,11 +147,11 @@ implements org.w3c.dom.Document, java.io.Serializable {
 
     /**
      * 
-     * Creates an empty <code>DocumentFragment</code> object. @todo not
-     * implemented yet
+     * Creates an empty <code>DocumentFragment</code> object.
      * 
      * @return A new <code>DocumentFragment</code>.
      */
+    // TODO: not implemented yet
     public DocumentFragment createDocumentFragment() {
         return delegate.createDocumentFragment();
     }
@@ -219,7 +219,7 @@ implements org.w3c.dom.Document, java.io.Serializable {
     }
 
     /**
-     * @todo: How Axis will maintain the Attribute representation ?
+     * TODO: How Axis will maintain the Attribute representation ?
      */
     public Attr createAttribute(String name) throws DOMException {
         return delegate.createAttribute(name);
@@ -634,7 +634,7 @@ implements org.w3c.dom.Document, java.io.Serializable {
     }
 
     /**
-     * @todo: Study it more.... to implement the deep mode correctly.
+     * TODO: Study it more.... to implement the deep mode correctly.
      *  
      */
     public Node cloneNode(boolean deep) {
@@ -642,7 +642,7 @@ implements org.w3c.dom.Document, java.io.Serializable {
     }
 
     /**
-     * @todo: is it OK to simply call the superclass?
+     * TODO: is it OK to simply call the superclass?
      *  
      */
     public void normalize() {

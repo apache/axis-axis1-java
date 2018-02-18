@@ -55,8 +55,6 @@ public class Messages {
 
     /**
       * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param locale The locale
       * @param key The resource key
       * @return The formatted message
       */
@@ -68,8 +66,6 @@ public class Messages {
 
     /**
       * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param locale The locale
       * @param key The resource key
       * @param arg0 The argument to place in variable {0}
       * @return The formatted message
@@ -82,8 +78,6 @@ public class Messages {
 
     /**
       * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param locale The locale
       * @param key The resource key
       * @param arg0 The argument to place in variable {0}
       * @param arg1 The argument to place in variable {1}
@@ -97,8 +91,6 @@ public class Messages {
 
     /**
       * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param locale The locale
       * @param key The resource key
       * @param arg0 The argument to place in variable {0}
       * @param arg1 The argument to place in variable {1}
@@ -113,8 +105,6 @@ public class Messages {
 
     /**
       * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param locale The locale
       * @param key The resource key
       * @param arg0 The argument to place in variable {0}
       * @param arg1 The argument to place in variable {1}
@@ -130,8 +120,6 @@ public class Messages {
 
     /**
       * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param locale The locale
       * @param key The resource key
       * @param arg0 The argument to place in variable {0}
       * @param arg1 The argument to place in variable {1}
@@ -148,8 +136,6 @@ public class Messages {
 
     /**
       * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param locale The locale
       * @param key The resource key
       * @param array An array of objects to place in corresponding variables
       * @return The formatted message

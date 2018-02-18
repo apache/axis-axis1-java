@@ -20,7 +20,7 @@ import javax.xml.namespace.QName;
 /**
  * DeserializerFactory for hexBinary.
  *
- * @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class HexDeserializerFactory extends BaseDeserializerFactory {
     public HexDeserializerFactory(Class javaType, QName xmlType) {

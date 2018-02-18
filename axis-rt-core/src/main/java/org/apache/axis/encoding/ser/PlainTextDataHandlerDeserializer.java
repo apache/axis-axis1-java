@@ -27,7 +27,7 @@ import java.io.IOException;
 
 /**
  * text/plain DataHandler Deserializer
- * Modified by Russell Butek <butek@us.ibm.com>
+ * Modified by Russell Butek (butek@us.ibm.com)
  */
 public class PlainTextDataHandlerDeserializer extends JAFDataHandlerDeserializer {
     protected static Log log =

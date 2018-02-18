@@ -89,9 +89,9 @@ public class MessageBundle {
       * <p>Gets a string message from the resource bundle for the given key. The
       * message may contain variables that will be substituted with the given
       * arguments. Variables have the format:</p>
-      * <dir>
+      * <pre>
       * This message has two variables: {0} and {1}
-      * </dir>
+      * </pre>
       * @param key The resource key
       * @param arg0 The argument to place in variable {0}
       * @return The message
@@ -105,9 +105,9 @@ public class MessageBundle {
       * <p>Gets a string message from the resource bundle for the given key. The
       * message may contain variables that will be substituted with the given
       * arguments. Variables have the format:</p>
-      * <dir>
+      * <pre>
       * This message has two variables: {0} and {1}
-      * </dir>
+      * </pre>
       * @param key The resource key
       * @param arg0 The argument to place in variable {0}
       * @param arg1 The argument to place in variable {1}
@@ -122,9 +122,9 @@ public class MessageBundle {
       * <p>Gets a string message from the resource bundle for the given key. The
       * message may contain variables that will be substituted with the given
       * arguments. Variables have the format:</p>
-      * <dir>
+      * <pre>
       * This message has two variables: {0} and {1}
-      * </dir>
+      * </pre>
       * @param key The resource key
       * @param arg0 The argument to place in variable {0}
       * @param arg1 The argument to place in variable {1}
@@ -140,9 +140,9 @@ public class MessageBundle {
       * <p>Gets a string message from the resource bundle for the given key. The
       * message may contain variables that will be substituted with the given
       * arguments. Variables have the format:</p>
-      * <dir>
+      * <pre>
       * This message has two variables: {0} and {1}
-      * </dir>
+      * </pre>
       * @param key The resource key
       * @param arg0 The argument to place in variable {0}
       * @param arg1 The argument to place in variable {1}
@@ -159,9 +159,9 @@ public class MessageBundle {
       * <p>Gets a string message from the resource bundle for the given key. The
       * message may contain variables that will be substituted with the given
       * arguments. Variables have the format:</p>
-      * <dir>
+      * <pre>
       * This message has two variables: {0} and {1}
-      * </dir>
+      * </pre>
       * @param key The resource key
       * @param arg0 The argument to place in variable {0}
       * @param arg1 The argument to place in variable {1}
@@ -179,9 +179,9 @@ public class MessageBundle {
       * <p>Gets a string message from the resource bundle for the given key. The
       * message may contain variables that will be substituted with the given
       * arguments. Variables have the format:</p>
-      * <dir>
+      * <pre>
       * This message has two variables: {0} and {1}
-      * </dir>
+      * </pre>
       * @param key The resource key
       * @param array An array of objects to place in corresponding variables
       * @return The message

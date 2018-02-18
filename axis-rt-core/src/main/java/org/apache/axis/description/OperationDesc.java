@@ -398,7 +398,7 @@ public class OperationDesc implements Serializable {
     /**
      * Return a list of ALL "in" params (including INOUTs)
      * 
-     * Note: if we were sure the order went IN->INOUT->OUT, we could optimize
+     * Note: if we were sure the order went IN-&gt;INOUT-&gt;OUT, we could optimize
      * this.
      * 
      * @return
@@ -417,7 +417,7 @@ public class OperationDesc implements Serializable {
     /**
      * Return a list of ALL "out" params (including INOUTs)
      * 
-     * Note: if we were sure the order went IN->INOUT->OUT, we could optimize
+     * Note: if we were sure the order went IN-&gt;INOUT-&gt;OUT, we could optimize
      * this.
      * 
      * @return

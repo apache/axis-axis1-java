@@ -41,8 +41,6 @@ import java.io.FileInputStream;
 /**
  * Servlet that autoregisters
  * @author Steve Loughran
- * xdoclet tags are not active yet; keep web.xml in sync
- * @web.servlet name="AutoRegisterServlet"  display-name="Axis Autoregister Servlet"  load-on-startup="30"
  */
 public class AutoRegisterServlet extends AxisServletBase {
 

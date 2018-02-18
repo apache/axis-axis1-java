@@ -28,7 +28,7 @@ import java.io.IOException;
 
 /**
  * SourceDataHandler Deserializer
- * Modified by Russell Butek <butek@us.ibm.com>
+ * Modified by Russell Butek (butek@us.ibm.com)
  */
 public class SourceDataHandlerDeserializer extends JAFDataHandlerDeserializer {
     protected static Log log =

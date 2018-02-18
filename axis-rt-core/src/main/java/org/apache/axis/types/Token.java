@@ -22,7 +22,7 @@ import org.apache.axis.utils.Messages;
  * token represents tokenized strings.
  * The base type of token is normalizedString.
  *
- * @author Chris Haddad <chaddad@cobia.net>
+ * @author Chris Haddad (chaddad@cobia.net)
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#token">XML Schema 3.3.2</a>
  */
 public class Token extends NormalizedString {

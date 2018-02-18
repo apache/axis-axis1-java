@@ -20,7 +20,7 @@ package org.apache.axis.encoding.ser;
 /**
  * SerializerFactory for Element
  *
- * @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class ElementSerializerFactory extends BaseSerializerFactory {
     public ElementSerializerFactory() {

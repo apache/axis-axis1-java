@@ -31,7 +31,7 @@ import java.util.List;
  * Deserializer for DOM elements
  *
  * @author Glen Daniels (gdaniels@apache.org)
- * Modified by @author Rich scheuerle <scheu@us.ibm.com>
+ * Modified by @author Rich scheuerle (scheu@us.ibm.com)
  */
 public class ElementDeserializer extends DeserializerImpl
 {

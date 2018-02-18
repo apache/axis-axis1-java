@@ -31,7 +31,7 @@ public class WSDLUtils {
         LogFactory.getLog(WSDLUtils.class.getName());
 
     /**
-     * Return the endpoint address from a <soap:address location="..."> tag
+     * Return the endpoint address from a &lt;soap:address location="..."&gt; tag
      */
     public static String getAddressFromPort(Port p) {
         // Get the endpoint for a port

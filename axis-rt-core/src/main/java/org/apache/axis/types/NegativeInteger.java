@@ -30,7 +30,7 @@ import java.io.ObjectStreamException;
  * negativeInteger is the infinite set {...,-2,-1}. 
  * The base type of negativeInteger is nonPositiveInteger. 
  *
- * @author Chris Haddad <haddadc@apache.org>
+ * @author Chris Haddad (haddadc@apache.org)
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#negativeInteger">XML Schema 3.3.15</a>
  */
 public class NegativeInteger extends NonPositiveInteger {

@@ -22,7 +22,7 @@ import java.text.NumberFormat;
 /**
  * Implementation of the XML Schema type gMonthDay
  *
- * @author Tom Jordahl <tomj@macromedia.com>
+ * @author Tom Jordahl (tomj@macromedia.com)
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#gMonthDay">XML Schema 3.2.12</a>
  */
 public class MonthDay implements java.io.Serializable {

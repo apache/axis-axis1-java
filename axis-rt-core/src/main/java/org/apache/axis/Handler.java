@@ -69,7 +69,7 @@ public interface Handler extends Serializable {
      * Indicate if this handler can process <code>qname</code>.
      *
      * @param qname  the <code>QName</code> to check
-     * @return true if this <code>Handler</code> can handle <code>qname<code>,
+     * @return true if this <code>Handler</code> can handle <code>qname</code>,
      *              false otherwise
      */
     public boolean canHandleBlock(QName qname);

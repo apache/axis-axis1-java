@@ -26,7 +26,6 @@ import java.util.Enumeration;
 
 /**
  * A simple listener for Servlet 2.3 session lifecycle events.
- * @web.listener
  * @author Glen Daniels (gdaniels@apache.org)
  */ 
 public class AxisHTTPSessionListener implements HttpSessionListener {

@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
- * A TypeDesc represents a Java<->XML data binding.  It is essentially
+ * A TypeDesc represents a Java&lt;-&gt;XML data binding.  It is essentially
  * a collection of FieldDescs describing how to map each field in a Java
  * class to XML.
  *

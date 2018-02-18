@@ -38,7 +38,7 @@ import org.xml.sax.helpers.AttributesImpl;
 /**
  * JAFDataHandler Serializer
  * @author Rick Rineholt
- * Modified by Rich Scheuerle <scheu@us.ibm.com>
+ * Modified by Rich Scheuerle (scheu@us.ibm.com)
  */
 public class JAFDataHandlerSerializer implements Serializer {
 

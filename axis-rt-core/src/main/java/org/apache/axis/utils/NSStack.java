@@ -200,11 +200,13 @@ public class NSStack {
      * up the stack IF the prefix which was used has been repeated further
      * down the stack.  I.e.:
      * 
-     * <pre:outer xmlns:pre="namespace">
-     *   <pre:inner xmlns:pre="otherNamespace">
+     * <pre>
+     * &lt;pre:outer xmlns:pre="namespace"&gt;
+     *   &lt;pre:inner xmlns:pre="otherNamespace"&gt;
      *      *here's where we're looking*
-     *   </pre:inner>
-     * </pre:outer>
+     *   &lt;/pre:inner&gt;
+     * &lt;/pre:outer&gt;
+     * </pre>
      * 
      * If we look for a prefix for "namespace" at the indicated spot, we won't
      * find one because "pre" is actually mapped to "otherNamespace"

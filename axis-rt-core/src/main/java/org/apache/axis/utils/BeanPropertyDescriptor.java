@@ -38,7 +38,7 @@ import java.lang.reflect.InvocationTargetException;
  * concerned, mostly involving the fact that we manage the arrays here
  * rather than relying on the value type class to do it itself.
  *
- * @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  * @author Glen Daniels (gdaniels@apache.org)
  **/
 public class BeanPropertyDescriptor

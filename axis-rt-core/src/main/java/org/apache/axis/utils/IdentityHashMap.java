@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * IdentityHashMap similar to JDK1.4's java.util.IdentityHashMap
- * @author Davanum Srinivas <dims@yahoo.com>
+ * @author Davanum Srinivas (dims@yahoo.com)
  */
 public class IdentityHashMap extends HashMap
 {

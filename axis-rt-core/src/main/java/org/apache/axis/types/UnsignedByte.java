@@ -21,7 +21,7 @@ import org.apache.axis.utils.Messages;
 /**
  * Custom class for supporting primitive XSD data type UnsignedByte
  *
- * @author Chris Haddad <chaddad@cobia.net>
+ * @author Chris Haddad (chaddad@cobia.net)
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#unsignedByte">XML Schema 3.3.24</a>
  */
 public class UnsignedByte extends UnsignedShort {

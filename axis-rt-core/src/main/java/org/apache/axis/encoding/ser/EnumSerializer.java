@@ -30,8 +30,8 @@ import java.io.IOException;
 /**
  * Serializer for a JAX-RPC enum.
  *
- * @author Rich Scheuerle <scheu@us.ibm.com>
- * @author Sam Ruby <rubys@us.ibm.com>
+ * @author Rich Scheuerle (scheu@us.ibm.com)
+ * @author Sam Ruby (rubys@us.ibm.com)
  */
 public class EnumSerializer extends SimpleSerializer
 {

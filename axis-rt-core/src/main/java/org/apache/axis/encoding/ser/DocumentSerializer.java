@@ -31,7 +31,7 @@ import java.io.IOException;
 /**
  * Serializer for DOM Document
  *
- * @author Davanum Srinivas <dims@yahoo.com>
+ * @author Davanum Srinivas (dims@yahoo.com)
  */
 
 public class DocumentSerializer implements Serializer {

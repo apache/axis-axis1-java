@@ -30,7 +30,7 @@ import java.io.ByteArrayOutputStream;
 
 /**
  * application/octet-stream DataHandler Deserializer
- * Modified by Davanum Srinivas <dims@yahoo.com>
+ * Modified by Davanum Srinivas (dims@yahoo.com)
  */
 public class OctetStreamDataHandlerDeserializer extends JAFDataHandlerDeserializer {
     protected static Log log =

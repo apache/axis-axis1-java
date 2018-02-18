@@ -46,10 +46,12 @@ import javax.xml.namespace.QName;
  * deserializing the XML for a method call or return.  In other words for
  * this XML:
  *
- * <methodName>
- *   <param1 xsi:type="xsd:string">Hello!</param1>
- *   <param2>3.14159</param2>
- * </methodName>
+ * <pre>
+ * &lt;methodName&gt;
+ *   &lt;param1 xsi:type="xsd:string"&gt;Hello!&lt;/param1&gt;
+ *   &lt;param2&gt;3.14159&lt;/param2&gt;
+ * &lt;/methodName&gt;
+ * </pre>
  *
  * ...we'll get onStartChild() events for <param1> and <param2>.
  *

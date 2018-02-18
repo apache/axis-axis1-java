@@ -19,7 +19,7 @@ package org.apache.axis.types;
 /**
  * Custom class for supporting XSD schema
  * 
- * @author Davanum Srinivas <dims@yahoo.com>
+ * @author Davanum Srinivas (dims@yahoo.com)
  */
 public class Schema implements java.io.Serializable {
     private org.apache.axis.message.MessageElement[] _any;

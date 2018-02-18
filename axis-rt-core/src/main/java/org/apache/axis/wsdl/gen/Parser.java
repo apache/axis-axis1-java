@@ -308,7 +308,7 @@ public class Parser {
 
     /**
      * Parse a WSDL at a given URL.
-     * <p/>
+     * <p>
      * This method will time out after the number of milliseconds specified
      * by our timeoutms member.
      *

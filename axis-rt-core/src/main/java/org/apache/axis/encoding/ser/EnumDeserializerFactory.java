@@ -20,7 +20,7 @@ import javax.xml.namespace.QName;
 /**
  * DeserializerFactory for Enumeration.
  *
- * @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class EnumDeserializerFactory extends BaseDeserializerFactory {
     public EnumDeserializerFactory(Class javaType, QName xmlType) {

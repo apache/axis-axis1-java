@@ -22,7 +22,7 @@ import java.text.NumberFormat;
 /**
  * Implementation of the XML Schema type gYearMonth
  *
- * @author Tom Jordahl <tomj@macromedia.com>
+ * @author Tom Jordahl (tomj@macromedia.com)
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#gYearMonth">XML Schema 3.2.10</a>
  */
 public class YearMonth implements java.io.Serializable {

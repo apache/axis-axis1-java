@@ -41,9 +41,6 @@ import java.util.Iterator;
  * 
  * @author Glen Daniels (gdaniels@apache.org)
  * @author Steve Loughran
- * xdoclet tags are not active yet; keep web.xml in sync
- * @web.servlet name="AdminServlet"  display-name="Axis Admin Servlet"  load-on-startup="100"
- * @web.servlet-mapping url-pattern="/servlet/AdminServlet"
  */
 public class AdminServlet extends AxisServletBase {
 

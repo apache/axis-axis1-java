@@ -6,7 +6,7 @@ import org.xml.sax.Attributes;
  * Null implementation of the Attributes interface.
  *
  * @author David Megginson
- * @author Sam Ruby <rubys@us.ibm.com>
+ * @author Sam Ruby (rubys@us.ibm.com)
  */
 public class NullAttributes implements Attributes {
 

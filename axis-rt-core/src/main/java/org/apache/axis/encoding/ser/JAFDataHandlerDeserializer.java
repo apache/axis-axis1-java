@@ -34,7 +34,7 @@ import javax.xml.namespace.QName;
 /**
  * JAFDataHandler Serializer
  * @author Rick Rineholt 
- * Modified by Rich Scheuerle <scheu@us.ibm.com>
+ * Modified by Rich Scheuerle (scheu@us.ibm.com)
  */
 public class JAFDataHandlerDeserializer extends DeserializerImpl {
     protected static Log log =

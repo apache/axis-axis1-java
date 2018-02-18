@@ -20,7 +20,7 @@ import javax.xml.namespace.QName;
 /**
  * SerializerFactory for Date primitives
  *
- * @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class DateSerializerFactory extends BaseSerializerFactory {
     public DateSerializerFactory(Class javaType, QName xmlType) {

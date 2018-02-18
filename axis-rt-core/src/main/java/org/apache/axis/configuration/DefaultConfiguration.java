@@ -33,9 +33,9 @@ import org.apache.commons.logging.Log;
 
 /**
  * Configuration provider that loads the default Axis configuration. It first loads the
- * <tt>org/apache/axis/&lt;type>/&lt;type>-config.wsdd</tt> resource and then searches for resources
- * with name <tt>META-INF/axis/default-&lt;type>-config.wsdd</tt>. All the discovered WSDD documents
- * are merged into a single configuration. <tt>&lt;type></tt> identifies the engine type for which
+ * <tt>org/apache/axis/&lt;type&gt;/&lt;type&gt;-config.wsdd</tt> resource and then searches for resources
+ * with name <tt>META-INF/axis/default-&lt;type&gt;-config.wsdd</tt>. All the discovered WSDD documents
+ * are merged into a single configuration. <tt>&lt;type&gt;</tt> identifies the engine type for which
  * the configuration is to be built; it is either <tt>client</tt> or <tt>server</tt>.
  * <p>
  * This class looks up the resources using the thread context class loader, except if it determines
@@ -47,8 +47,8 @@ import org.apache.commons.logging.Log;
  * The algorithm implemented by this class is designed to support the modularized artifacts
  * introduced in Axis 1.4.1. It allows individual JARs to contribute items (transports, handlers,
  * etc.) to the default configuration. The naming convention for the base configuration file
- * (<tt>org/apache/axis/&lt;type>/&lt;type>-config.wsdd</tt>) was chosen for consistency with Axis
- * 1.4, while <tt>META-INF/axis/default-&lt;type>-config.wsdd</tt> is new in Axis 1.4.1.
+ * (<tt>org/apache/axis/&lt;type&gt;/&lt;type&gt;-config.wsdd</tt>) was chosen for consistency with Axis
+ * 1.4, while <tt>META-INF/axis/default-&lt;type&gt;-config.wsdd</tt> is new in Axis 1.4.1.
  * <p>
  * {@link DefaultConfiguration} is also used by {@link FileProvider} to build the configuration if
  * no existing configuration file is found.

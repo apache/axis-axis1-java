@@ -22,7 +22,7 @@ import javax.xml.namespace.QName;
 /**
  * DeserializerFactory for arrays
  *
- * @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class ArrayDeserializerFactory extends BaseDeserializerFactory {
     private QName componentXmlType;

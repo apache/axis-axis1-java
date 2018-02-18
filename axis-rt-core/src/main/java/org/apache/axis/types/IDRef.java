@@ -20,7 +20,7 @@ package org.apache.axis.types;
 /**
  * Custom class for supporting XSD data type IDRef
  * 
- * @author Davanum Srinivas <dims@yahoo.com>
+ * @author Davanum Srinivas (dims@yahoo.com)
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#IDREF">XML Schema 3.3.10 IDREFS</a>
  */
 public class IDRef extends NCName {

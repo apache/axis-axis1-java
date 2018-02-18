@@ -43,7 +43,7 @@ import java.util.Properties;
  * (as returned by Local.getDefault()). As property files are found the
  * property values are merged so that inheritance is preserved.</p>
  * <p>The order of searching is:</p>
- * <dir>
+ * <pre>
  * basename + "_" + langage + "_" + country + "_" + variant
  * basename + "_" + langage + "_" + country
  * basename + "_" + langage
@@ -51,7 +51,7 @@ import java.util.Properties;
  * basename + "_" + defaultLanguage + "_" + defaultCountry
  * basename + "_" + defaultLanguage
  * basename
- * </dir>
+ * </pre>
  * <p>The basename is the name of the property file without the ".properties"
  * extension.</p>
  * <p>Properties will be cached for performance.<p>
@@ -106,7 +106,7 @@ public class RB {
       * @param caller The calling object. This is used to get the package name
       * to further construct the basename as well as to get the proper ClassLoader
       * @param name The name of the property file without the ".properties" extension
-      * @param local The local
+      * @param locale The locale
       */
     public RB(Object caller, String name, Locale locale) throws MissingResourceException
     {
@@ -170,9 +170,9 @@ public class RB {
       * <p>Gets a string message from the resource bundle for the given key. The
       * message may contain variables that will be substituted with the given
       * arguments. Variables have the format:</p>
-      * <dir>
+      * <pre>
       * This message has two variables: {0} and {1}
-      * </dir>
+      * </pre>
       * @param key The resource key
       * @param arg0 The argument to place in variable {0}
       * @return The message
@@ -188,9 +188,9 @@ public class RB {
       * <p>Gets a string message from the resource bundle for the given key. The
       * message may contain variables that will be substituted with the given
       * arguments. Variables have the format:</p>
-      * <dir>
+      * <pre>
       * This message has two variables: {0} and {1}
-      * </dir>
+      * </pre>
       * @param key The resource key
       * @param arg0 The argument to place in variable {0}
       * @param arg1 The argument to place in variable {1}
@@ -208,9 +208,9 @@ public class RB {
       * <p>Gets a string message from the resource bundle for the given key. The
       * message may contain variables that will be substituted with the given
       * arguments. Variables have the format:</p>
-      * <dir>
+      * <pre>
       * This message has two variables: {0} and {1}
-      * </dir>
+      * </pre>
       * @param key The resource key
       * @param arg0 The argument to place in variable {0}
       * @param arg1 The argument to place in variable {1}
@@ -230,9 +230,9 @@ public class RB {
       * <p>Gets a string message from the resource bundle for the given key. The
       * message may contain variables that will be substituted with the given
       * arguments. Variables have the format:</p>
-      * <dir>
+      * <pre>
       * This message has two variables: {0} and {1}
-      * </dir>
+      * </pre>
       * @param key The resource key
       * @param array An array of objects to place in corresponding variables
       * @return The message
@@ -515,7 +515,7 @@ public class RB {
       * Get a message from resource.properties from the package of the given object.
       * @param caller The calling object, used to get the package name and class loader
       * @param key The resource key
-      * @param array An array of objects to place in corresponding variables
+      * @param args An array of objects to place in corresponding variables
       * @return The formatted message
       */
     public static String getString(Object caller, String key, Object[] args)
@@ -642,7 +642,7 @@ public class RB {
       * @param caller The calling object, used to get the package name and class loader
       * @param locale The locale
       * @param key The resource key
-      * @param array An array of objects to place in corresponding variables
+      * @param args An array of objects to place in corresponding variables
       * @return The formatted message
       */
     public static String getString(Object caller, Locale locale, String key, Object[] args)

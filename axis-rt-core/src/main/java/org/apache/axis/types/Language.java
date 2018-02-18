@@ -26,7 +26,7 @@ import org.apache.axis.utils.Messages;
  * as defined in the language identification section of [XML 1.0 (Second Edition)]. 
  * The base type of language is token. 
  *
- * @author Eddie Pick <eddie@pick.eu.org>
+ * @author Eddie Pick (eddie@pick.eu.org)
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#language">XML Schema 3.3.3</a>
  */
 public class Language extends Token {

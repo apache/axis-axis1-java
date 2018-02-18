@@ -24,7 +24,7 @@ import java.util.Calendar;
  * Implementation of the XML Schema type duration. Duration supports a minimum
  * fractional second precision of milliseconds.
  *
- * @author Wes Moulder <wes@themindelectric.com>
+ * @author Wes Moulder (wes@themindelectric.com)
  * @author Dominik Kacprzak (dominik@opentoolbox.com)
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#duration">XML Schema 3.2.6</a>
  */

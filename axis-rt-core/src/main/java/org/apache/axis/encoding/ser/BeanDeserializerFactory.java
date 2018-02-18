@@ -30,8 +30,8 @@ import java.io.IOException;
 /**
  * DeserializerFactory for Bean
  *
- * @author Rich Scheuerle <scheu@us.ibm.com>
- * @author Sam Ruby <rubys@us.ibm.com>
+ * @author Rich Scheuerle (scheu@us.ibm.com)
+ * @author Sam Ruby (rubys@us.ibm.com)
  */
 public class BeanDeserializerFactory extends BaseDeserializerFactory {
 

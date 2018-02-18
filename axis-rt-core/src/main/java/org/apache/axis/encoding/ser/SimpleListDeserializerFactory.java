@@ -25,9 +25,9 @@ import java.lang.reflect.Constructor;
 
 /**
  * DeserializerFactory for 
- * <xsd:simpleType ...>
- *   <xsd:list itemType="...">
- * </xsd:simpleType>
+ * &lt;xsd:simpleType ...&gt;
+ *   &lt;xsd:list itemType="..."&gt;
+ * &lt;/xsd:simpleType&gt;
  * based on SimpleDeserializerFactory
  *
  * @author Ias (iasandcb@tmax.co.kr)

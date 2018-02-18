@@ -33,8 +33,8 @@ import java.util.TimeZone;
 /**
  * Serializer for dateTime (Calendar).
  *
- * @author Sam Ruby <rubys@us.ibm.com>
- * Modified by @author Rich scheuerle <scheu@us.ibm.com>
+ * @author Sam Ruby (rubys@us.ibm.com)
+ * Modified by @author Rich scheuerle (scheu@us.ibm.com)
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#dateTime">XML Schema 3.2.16</a>
  */
 public class CalendarSerializer implements SimpleValueSerializer {

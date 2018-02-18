@@ -19,7 +19,7 @@ package org.apache.axis.components.net;
 /**
  * Secure Socket factory.
  * This has a separate interface to allow discovery (by interface)
- * and runtime distinction to be made between Socket & SecureSockets.
+ * and runtime distinction to be made between Socket &amp; SecureSockets.
  * 
  * @author Richard A. Sitze
  * @author Davanum Srinivas (dims@yahoo.com)

@@ -20,7 +20,7 @@ import javax.xml.namespace.QName;
 /**
  * SerializerFactory for hexBinary.
  *
- * @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class Base64SerializerFactory extends BaseSerializerFactory {
     public   Base64SerializerFactory(Class javaType, QName xmlType) {

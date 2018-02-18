@@ -45,8 +45,7 @@ import java.util.Properties;
 
 
 /**
- * <p>Configuration properties for AXIS.
- * </p>
+ * Configuration properties for AXIS.
  *
  * <p>Manage configuration properties according to a secure
  * scheme similar to that used by classloaders:
@@ -70,7 +69,6 @@ import java.util.Properties;
  *   </li>
  *   <li>System properties take precedence over all other properties</li>
  * </ul>
- * </p>
  *
  * @author Richard A. Sitze
  */

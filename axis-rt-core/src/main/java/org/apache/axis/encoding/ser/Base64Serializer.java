@@ -30,8 +30,8 @@ import java.io.IOException;
 /**
  * Serializer for Base64
  *
- * @author Sam Ruby <rubys@us.ibm.com>
- * Modified by @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Sam Ruby (rubys@us.ibm.com)
+ * Modified by @author Rich Scheuerle (scheu@us.ibm.com)
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#base64Binary">XML Schema 3.2.16</a>
  */
 public class Base64Serializer implements SimpleValueSerializer {

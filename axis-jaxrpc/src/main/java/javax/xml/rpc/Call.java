@@ -36,7 +36,7 @@ public interface Call {
 
     /**
      * Standard property: User name for authentication
-     * <p>Type: <code>java.lang.String
+     * <p>Type: <code>java.lang.String</code>
      */
     public static final String USERNAME_PROPERTY =
         "javax.xml.rpc.security.auth.username";
@@ -126,7 +126,7 @@ public interface Call {
      * @param parameterMode Mode of the parameter-whether
      *                <code>ParameterMode.IN</code>,
      *                <code>ParameterMode.OUT</code>,
-     *                or <code>ParameterMode.INOUT
+     *                or <code>ParameterMode.INOUT</code>
      * @throws JAXRPCException This exception may
      *     be thrown if the method <code>isParameterAndReturnSpecRequired</code>
      *     returns <code>false</code> for this operation.

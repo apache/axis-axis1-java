@@ -30,7 +30,7 @@ import java.io.InputStream;
 
 /**
  * ImageDataHandler Deserializer
- * Modified by Russell Butek <butek@us.ibm.com>
+ * Modified by Russell Butek (butek@us.ibm.com)
  */
 public class ImageDataHandlerDeserializer extends JAFDataHandlerDeserializer {
     protected static Log log =

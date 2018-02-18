@@ -22,7 +22,7 @@ import java.util.Vector;
 /**
  * A simple cache of previously loaded methods
  *
- * @author Sam Ruby <rubys@us.ibm.com>
+ * @author Sam Ruby (rubys@us.ibm.com)
  */
 public class JavaMethod {
 
@@ -56,7 +56,6 @@ public class JavaMethod {
     /**
      * Lookup a method based on name.  This method returns an array just in
      * case there is more than one.
-     * @param name name of method
      */
     public Method[] getMethod() {
         return methods;

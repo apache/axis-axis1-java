@@ -225,8 +225,8 @@ public class JavaUtils
     /** Utility function to convert an Object to some desired Class.
      *
      * Right now this works for:
-     *     arrays <-> Lists,
-     *     Holders <-> held values
+     *     arrays &lt;-&gt; Lists,
+     *     Holders &lt;-&gt; held values
      * @param arg the array to convert
      * @param destClass the actual class we want
      */

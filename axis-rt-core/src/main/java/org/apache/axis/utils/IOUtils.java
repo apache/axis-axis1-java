@@ -44,7 +44,7 @@ public class IOUtils
      * Same as the normal <tt>in.read(b, off, len)</tt>, but tries to ensure that
      * the entire len number of bytes is read.
      * <p>
-     * @returns the number of bytes read, or -1 if the end of file is
+     * @return the number of bytes read, or -1 if the end of file is
      *  reached before any bytes are read
      */
     public static int readFully(InputStream in, byte[] b, int off, int len)
