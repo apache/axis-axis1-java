@@ -57,7 +57,7 @@ public class WSDDDeployment
     private HashMap typeMappings = new HashMap();
     private WSDDGlobalConfiguration globalConfig = null;
     /**
-     * Mapping of namespaces -> services
+     * Mapping of namespaces -&gt; services
      */
             private HashMap namespaceToServices = new HashMap();
     private AxisEngine engine;
@@ -476,7 +476,7 @@ public class WSDDDeployment
     }
 
     /**
-     * Remove a namespace -> WSDDService mapping.
+     * Remove a namespace -&gt; WSDDService mapping.
      *
      * @param namespace the namespace URI to unmap
      */

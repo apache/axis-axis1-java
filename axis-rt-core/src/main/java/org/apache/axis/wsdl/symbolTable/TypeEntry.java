@@ -32,7 +32,7 @@ import java.util.Vector;
  * A TypeEntry object extends SymTabEntry and is built by the SymbolTable class for
  * each supported root complexType, simpleType, and elements that are
  * defined or encountered.
- * <p/>
+ * <p>
  * SymTabEntry
  * |
  * TypeEntry
@@ -43,28 +43,28 @@ import java.util.Vector;
  * CollectionType                CollectionElement,
  * DefinedType,                  UndefinedElement)
  * UndefinedType)
- * <p/>
+ * <p>
  * UndefinedType and UndefinedElement are placeholders when the real type or element
  * is not encountered yet.  Both of these implement the Undefined interface.
- * <p/>
+ * <p>
  * A TypeEntry whose java (or other language) name depends on an Undefined type, will
  * have its name initialization deferred until the Undefined type is replaced with
  * a defined type.  The updateUndefined() method is invoked by the UndefinedDelegate to
  * update the information.
- * <p/>
+ * <p>
  * Each TypeEntry whose language name depends on another TypeEntry will have the refType
  * field set.  For example:
- * <element name="foo" type="bar" />
+ * &lt;element name="foo" type="bar" /&gt;
  * The TypeEntry for "foo" will have a refType set to the TypeEntry of "bar".
- * <p/>
+ * <p>
  * Another Example:
- * <xsd:complexType name="hobbyArray">
- * <xsd:complexContent>
- * <xsd:restriction base="soapenc:Array">
- * <xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/>
- * </xsd:restriction>
- * </xsd:complexContent>
- * </xsd:complexType>
+ * &lt;xsd:complexType name="hobbyArray"&gt;
+ * &lt;xsd:complexContent&gt;
+ * &lt;xsd:restriction base="soapenc:Array"&gt;
+ * &lt;xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/&gt;
+ * &lt;/xsd:restriction&gt;
+ * &lt;/xsd:complexContent&gt;
+ * &lt;/xsd:complexType&gt;
  * The TypeEntry for "hobbyArray" will have a refType that locates the TypeEntry for xsd:string
  * and the dims field will be "[]"
  * 
@@ -89,7 +89,7 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
     protected QName componentType = null;              // If this is an array, the component type
 
     /** If this TypeEntry represents an array with elements inside a "wrapper"
-     * this field can optionally change the inner QName (default is <item>).
+     * this field can optionally change the inner QName (default is &lt;item&gt;).
      */
     protected QName itemQName = null;
 

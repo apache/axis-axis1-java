@@ -444,11 +444,10 @@ public class EJBProvider extends RPCProvider
     /**
      * Override the default implementation such that we can include
      * special handling for {@link java.rmi.ServerException}.
-     * <p/>
+     * <p>
      * Converts {@link java.rmi.ServerException} exceptions to
      * {@link InvocationTargetException} exceptions with the same cause.
      * This allows the axis framework to create a SOAP fault.
-     * </p>
      *
      * @see org.apache.axis.providers.java.RPCProvider#invokeMethod(org.apache.axis.MessageContext, java.lang.reflect.Method, java.lang.Object, java.lang.Object[])
      */

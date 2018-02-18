@@ -24,8 +24,8 @@ package org.apache.axis.encoding;
  * of the following methods:
  *
  * public static create(Class javaType, QName xmlType)
- * public <constructor>(Class javaType, QName xmlType)
- * public <constructor>()
+ * public &lt;constructor&gt;(Class javaType, QName xmlType)
+ * public &lt;constructor&gt;()
  *
  * The deployment code will attempt to invoke these methods in the above order.
  * The xmlType, javaType arguments are filled in with the values supplied during the

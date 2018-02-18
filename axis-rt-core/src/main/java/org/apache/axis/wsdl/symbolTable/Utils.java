@@ -175,7 +175,7 @@ public class Utils {
 
     /**
      * An xml element may have a name.
-     * For example &lt.element name="foo" type="b:bar"&gt.
+     * For example &lt;element name="foo" type="b:bar"&gt;
      * has the name "element".  This routine gets the full QName of the element.
      * 
      * @param node 
@@ -200,7 +200,7 @@ public class Utils {
 
     /**
      * XML nodes may have a name attribute.
-     * For example &lt.element name="foo" type="b:bar"&gt.
+     * For example &lt;element name="foo" type="b:bar"&gt;
      * has the name attribute value "foo".  This routine gets the QName of the name attribute value.
      * 
      * @param node 
@@ -274,12 +274,12 @@ public class Utils {
      * - use of an anonymous type (i.e. a nested type underneath itself)
      * - a wsdl:part can use the element attribute.
      * - an extension can use the base attribute.
-     * <p/>
+     * <p>
      * This routine returns a QName representing this "type".
      * The forElement value is also returned to indicate whether the
      * QName represents an element (i.e. obtained using the ref attribute)
      * or a type.
-     * <p/>
+     * <p>
      * Other attributes affect the QName that is returned.
      * If the "minOccurs" and "maxOccurs" are set such that the
      * type is a collection of "types", then an artificial qname is
@@ -1022,7 +1022,7 @@ public class Utils {
     }
 
     /**
-    * Determines if the DOM Node represents an xs:<node>
+    * Determines if the DOM Node represents an xs:&lt;node&gt;
     */
     public static boolean isXsNode (Node node, String nameName)
     {

@@ -41,7 +41,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * &lt;/xsd:simpleType&gt;
  * based on SimpleSerializer
  *
- * @author Ias <iasandcb@tmax.co.kr>
+ * @author Ias (iasandcb@tmax.co.kr)
  */
 public class SimpleListSerializer implements SimpleValueSerializer {
     public QName xmlType;

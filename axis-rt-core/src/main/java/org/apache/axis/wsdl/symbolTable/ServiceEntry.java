@@ -39,11 +39,6 @@ public class ServiceEntry extends SymTabEntry {
         this.service = service;
     }    // ctor
 
-    /**
-     *
-     * @param originalServiceName
-     *
-     */
     public String getOriginalServiceName(){
 	return this.originalServiceName;
     }

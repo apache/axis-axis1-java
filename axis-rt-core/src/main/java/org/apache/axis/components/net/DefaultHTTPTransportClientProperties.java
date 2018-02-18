@@ -58,7 +58,7 @@ public class DefaultHTTPTransportClientProperties
     }
 
     /**
-     * @see org.apache.axis.components.net.TransportClientProperties#getPort()
+     * @see org.apache.axis.components.net.TransportClientProperties#getProxyPort()
      */
     public String getProxyPort() {
         if (proxyPort == null) {

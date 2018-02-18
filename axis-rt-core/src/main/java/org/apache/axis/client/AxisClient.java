@@ -35,7 +35,7 @@ import org.apache.commons.logging.Log;
 
 /**
  * Provides the equivalent of an "Axis engine" on the client side.
- * Subclasses hardcode initialization & setup logic for particular
+ * Subclasses hardcode initialization &amp; setup logic for particular
  * client-side transports.
  *
  * @author Rob Jellinghaus (robj@unrealities.com)

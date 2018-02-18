@@ -89,8 +89,8 @@ import java.util.Vector;
 /**
  * This class represents a table of all of the top-level symbols from a set of WSDL Definitions and
  * DOM Documents:  XML types; WSDL messages, portTypes, bindings, and services.
- * <p/>
- * This symbolTable contains entries of the form <key, value> where key is of type QName and value is
+ * <p>
+ * This symbolTable contains entries of the form &lt;key, value&gt; where key is of type QName and value is
  * of type Vector.  The Vector's elements are all of the objects that have the given QName.  This is
  * necessary since names aren't unique among the WSDL types.  message, portType, binding, service,
  * could all have the same QName and are differentiated merely by type.  SymbolTable contains
@@ -142,7 +142,7 @@ public class SymbolTable {
     private final Map typeIndex = Collections.unmodifiableMap(typeTypeEntries);
 
     /**
-     * cache of nodes -> base types for complexTypes.  The cache is
+     * cache of nodes -&gt; base types for complexTypes.  The cache is
      * built on nodes because multiple TypeEntry objects may use the
      * same node.
      */
@@ -366,7 +366,7 @@ public class SymbolTable {
     }    // getTypes
 
     /**
-     * Return an unmodifiable map of qnames -> Elements in the symbol
+     * Return an unmodifiable map of qnames -&gt; Elements in the symbol
      * table.
      * 
      * @return an unmodifiable <code>Map</code> value
@@ -376,7 +376,7 @@ public class SymbolTable {
     }
 
     /**
-     * Return an unmodifiable map of qnames -> Elements in the symbol
+     * Return an unmodifiable map of qnames -&gt; Elements in the symbol
      * table.
      * 
      * @return an unmodifiable <code>Map</code> value
@@ -1515,16 +1515,16 @@ public class SymbolTable {
 
     /**
      * ensures that a message in a <code>&lt;input&gt;</code>, <code>&lt;output&gt;</code>,
-     * or <code>&lt;fault&gt;</fault> element in an <code>&lt;operation&gt;</code>
+     * or <code>&lt;fault&gt;</code> element in an <code>&lt;operation&gt;</code>
      * element is valid. In particular, ensures that
      * <ol>
      * <li>an attribute <code>message</code> is present (according to the
      * XML Schema for WSDL 1.1 <code>message</code> is <strong>required</strong>
-     * <p/>
+     * <p>
      * <li>the value of attribute <code>message</code> (a QName) refers to
      * an already defined message
      * </ol>
-     * <p/>
+     * <p>
      * <strong>Note</strong>: this method should throw a <code>javax.wsdl.WSDLException</code> rather than
      * a <code>java.io.IOException</code>
      *
@@ -1554,9 +1554,9 @@ public class SymbolTable {
 
     /**
      * ensures that an an element <code>&lt;operation&gt;</code> within
-     * an element <code>&lt;portType&gt;<code> is valid. Throws an exception
+     * an element <code>&lt;portType&gt;</code> is valid. Throws an exception
      * if the operation is not valid.
-     * <p/>
+     * <p>
      * <strong>Note</strong>: this method should throw a <code>javax.wsdl.WSDLException</code>
      * rather than a <code>java.io.IOException</code>
      *
@@ -1619,7 +1619,7 @@ public class SymbolTable {
     /**
      * ensures that an an element <code>&lt;portType&gt;</code>
      * is valid. Throws an exception if the portType is not valid.
-     * <p/>
+     * <p>
      * <strong>Note</strong>: this method should throw a <code>javax.wsdl.WSDLException</code>
      * rather than a <code>java.io.IOException</code>
      *

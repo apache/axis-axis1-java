@@ -141,7 +141,7 @@ public class JavaServiceDesc implements ServiceDesc {
     /** Method names for which we have completed any introspection necessary */
     private ArrayList completedNames = new ArrayList();
 
-    /** Our typemapping for resolving Java<->XML type issues */
+    /** Our typemapping for resolving Java&lt;-&gt;XML type issues */
     private TypeMapping tm = null;
     private TypeMappingRegistry tmr = null;
 

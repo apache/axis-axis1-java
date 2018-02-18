@@ -65,9 +65,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * <p>Description: </p> This class is used to recursively serializes a Java Class into
+ * This class is used to recursively serializes a Java Class into
  * an XML Schema representation.
- * <p/>
+ * <p>
  * It has utility methods to create a schema node, assosiate namespaces to the various types
  *
  * @author unascribed
@@ -1001,7 +1001,7 @@ public class Types {
      * Write a schema representation for the given <code>Class</code>. Recurse
      * through all the public fields as well as fields represented by java
      * bean compliant accessor methods.
-     * <p/>
+     * <p>
      * Then return the qualified string representation of the generated type
      *
      * @param type Class for which to generate schema
@@ -1016,7 +1016,7 @@ public class Types {
      * Write a schema representation for the given <code>Class</code>. Recurse
      * through all the public fields as well as fields represented by java
      * bean compliant accessor methods.
-     * <p/>
+     * <p>
      * Then return the qualified string representation of the generated type
      *
      * @param type  Class for which to generate schema

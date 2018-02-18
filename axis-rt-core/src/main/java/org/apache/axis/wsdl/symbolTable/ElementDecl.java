@@ -19,7 +19,7 @@ import javax.xml.namespace.QName;
 
 /**
  * Simple utility struct for holding element declarations.
- * <p/>
+ * <p>
  * This simply correlates a QName to a TypeEntry.
  * 
  * @author Glen Daniels (gdaniels@apache.org)

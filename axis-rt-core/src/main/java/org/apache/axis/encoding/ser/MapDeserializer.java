@@ -31,13 +31,13 @@ import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Map;
 
-/*
+/**
  * A <code>MapSerializer</code> is be used to deserialize
  * deserialize Maps using the <code>SOAP-ENC</code>
  * encoding style.<p>
  * 
  * @author Glen Daniels (gdaniels@apache.org)
- * Modified by @author Rich scheuerle <scheu@us.ibm.com>
+ * Modified by @author Rich scheuerle (scheu@us.ibm.com)
  */
 public class MapDeserializer extends DeserializerImpl {
 
@@ -135,7 +135,7 @@ public class MapDeserializer extends DeserializerImpl {
     }
     
     /**
-     * A deserializer for an <item>.  Handles getting the key and
+     * A deserializer for an &lt;item&gt;.  Handles getting the key and
      * value objects from their own deserializers, and then putting
      * the values into the HashMap we're building.
      * 

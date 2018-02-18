@@ -68,7 +68,7 @@ public class Duration implements java.io.Serializable {
      * PnYnMnDTnHnMnS.
      *
      * @param duration String
-     * @throws SchemaException if the string doesn't parse correctly.
+     * @throws IllegalArgumentException if the string doesn't parse correctly.
      */
     public Duration(String duration) throws IllegalArgumentException {
         int position = 1;

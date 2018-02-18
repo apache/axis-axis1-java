@@ -33,7 +33,7 @@ public class UnsignedByte extends UnsignedShort {
 
     /**
      * ctor for UnsignedByte
-     * @exception Exception will be thrown if validation fails
+     * @exception NumberFormatException will be thrown if validation fails
      */
     public UnsignedByte(long sValue) throws NumberFormatException {
       setValue(sValue);

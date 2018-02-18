@@ -107,7 +107,7 @@ public class AdminClient
     /**
      * Construct an admin client w/o a logger.
      * If the client cannot create a call object, then it does not throw an exception.
-     * Instead it prints a message to {@link System.err}.
+     * Instead it prints a message to {@link System#err}.
      * This is for 'historical reasons'
      */
     public AdminClient()
@@ -152,7 +152,7 @@ public class AdminClient
 
 
     /**
-     * External access to our <code>Call</code< object.
+     * External access to our <code>Call</code> object.
      * This will be null if the non-excepting constructor was used
      * and the construction failed.
      * @return the <code>Call</code> object this instance uses

@@ -22,44 +22,39 @@ import org.apache.axis.utils.Messages;
 import java.util.HashMap;
 
 /**
- * <p>
  * The TypeMappingRegistry keeps track of the individual TypeMappings.
- * </p>
  * <p>
  * The TypeMappingRegistry for axis contains a default type mapping
  * that is set for either SOAP 1.1 or SOAP 1.2
  * The default type mapping is a singleton used for the entire
  * runtime and should not have anything new registered in it.
- * </p>
  * <p>
  * Instead the new TypeMappings for the deploy and service are
  * made in a separate TypeMapping which is identified by
  * the soap encoding.  These new TypeMappings delegate back to 
  * the default type mapping when information is not found.
- * </p>
  * <p>
  * So logically we have:
  * <pre>
  *         TMR
  *         | |  
- *         | +---------------> DefaultTM 
+ *         | +---------------&gt; DefaultTM 
  *         |                      ^
  *         |                      |
- *         +----> TM --delegate---+
+ *         +----&gt; TM --delegate---+
  * </pre>
  *
  * But in the implementation, the TMR references
  * "delegate" TypeMappings (TM') which then reference the actual TM's
- * </p>
  * <p>
  * So the picture is really:
  * <pre>
  *         TMR
  *         | |  
- *         | +-----------TM'------> DefaultTM 
+ *         | +-----------TM'------&gt; DefaultTM 
  *         |              ^
  *         |              |
- *         +-TM'-> TM ----+
+ *         +-TM'-&gt; TM ----+
  * </pre>
  *
  * This extra indirection is necessary because the user may want to 
@@ -71,8 +66,8 @@ import java.util.HashMap;
  *         | |  
  *         | +-----------TM'--+     DefaultTM 
  *         |              ^   |
- *         |              |   +---> New User Defined Default TM
- *         +-TM'-> TM ----+
+ *         |              |   +---&gt; New User Defined Default TM
+ *         +-TM'-&gt; TM ----+
  * </pre>
  *
  * The other reason that it is necessary is when a deploy
@@ -82,26 +77,26 @@ import java.util.HashMap;
  * <pre>
  *       Deploy TMR
  *         | |  
- *         | +-----------TM'------> DefaultTM 
+ *         | +-----------TM'------&gt; DefaultTM 
  *         |              ^
  *         |              |
- *         +-TM'-> TM ----+
+ *         +-TM'-&gt; TM ----+
  *
  *       Service TMR
  *         | |  
- *         | +-----------TM'------> DefaultTM 
+ *         | +-----------TM'------&gt; DefaultTM 
  *         |              ^
  *         |              |
- *         +-TM'-> TM ----+
+ *         +-TM'-&gt; TM ----+
  *
  *    ServiceTMR.delegate(DeployTMR)
  *
  *       Deploy TMR
  *         | |  
- *         | +------------TM'------> DefaultTM 
+ *         | +------------TM'------&gt; DefaultTM 
  *         |              ^ ^ 
  *         |              | |
- *         +-TM'-> TM ----+ |
+ *         +-TM'-&gt; TM ----+ |
  *           ^              |
  *   +-------+              |
  *   |                      |
@@ -110,7 +105,7 @@ import java.util.HashMap;
  *   |     | +----------TM'-+               
  *   |     |              
  *   |     |              
- *   |     +-TM'-> TM +
+ *   |     +-TM'-&gt; TM +
  *   |                |
  *   +----------------+
  * </pre>
@@ -118,12 +113,11 @@ import java.util.HashMap;
  * So now the service uses the DefaultTM of the Deploy TMR, and
  * the Service TM properly delegates to the deploy's TM.  And
  * if either the deploy defaultTM or TMs change, the links are not broken.
- * </p>
  * 
  * @author James Snell (jasnell@us.ibm.com)
  * @author Sam Ruby (rubys@us.ibm.com)
  * Re-written for JAX-RPC Compliance by
- * @author Rich Scheuerle (scheu@us.ibm.com
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class TypeMappingRegistryImpl implements TypeMappingRegistry { 
     

@@ -49,7 +49,7 @@ public class Id extends NCName {
     /**
      *
      * validates the data and sets the value for the object.
-     * @param Token String value
+     * @param stValue String value
      * @throws IllegalArgumentException if invalid format
      */
     public void setValue(String stValue) throws IllegalArgumentException {

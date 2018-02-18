@@ -22,10 +22,10 @@ import javax.xml.namespace.QName;
 /**
  * This Element is for a QName that is a 'collection'.
  * For example,
- * <element ref="bar" maxOccurs="unbounded" />
+ * &lt;element ref="bar" maxOccurs="unbounded" /&gt;
  * We need a way to indicate in the symbol table that a foo is
  * 'collection of bars',  In such cases a collection element is
- * added with the special QName  <name>[<minOccurs>, <maxOccurs>]
+ * added with the special QName  &lt;name&gt;[&lt;minOccurs&gt;, &lt;maxOccurs&gt;]
  */
 public class CollectionElement extends DefinedElement implements CollectionTE {
 

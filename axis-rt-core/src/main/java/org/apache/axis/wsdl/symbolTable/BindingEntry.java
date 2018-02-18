@@ -152,7 +152,7 @@ public class BindingEntry extends SymTabEntry {
      * operation outputBodyTypes = USE_ENCODED
      * operation faultBodyTypes = USE_ENCODED
      * mimeTypes = null
-     * <p/>
+     * <p>
      * The caller of this constructor should
      * also call the various setter methods to fully fill out this object:
      * setBindingType, setBindingStyle, setHasLiteral, setAttribute,

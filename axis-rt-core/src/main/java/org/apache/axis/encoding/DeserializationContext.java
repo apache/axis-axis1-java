@@ -346,7 +346,7 @@ public class DeserializationContext implements ContentHandler, DTDHandler,
     }
 
     /**
-     * Construct a QName from a string of the form <prefix>:<localName>
+     * Construct a QName from a string of the form &lt;prefix&gt;:&lt;localName&gt;
      * @param qNameStr is the prefixed name from the xml text
      * @return QName
      */
@@ -670,8 +670,8 @@ public class DeserializationContext implements ContentHandler, DTDHandler,
     }
 
     /**
-     * During deserialization, an element with an href=#id<int>
-     * may be encountered before the element defining id=id<int> is
+     * During deserialization, an element with an href=#id&lt;int&gt;
+     * may be encountered before the element defining id=id&lt;int&gt; is
      * read.  In these cases, the getObjectByRef method above will
      * return null.  The deserializer is placed in a table keyed
      * by href (a fixup table). After the element id is processed,

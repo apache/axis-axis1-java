@@ -53,7 +53,7 @@ import javax.xml.namespace.QName;
  * &lt;/methodName&gt;
  * </pre>
  *
- * ...we'll get onStartChild() events for <param1> and <param2>.
+ * ...we'll get onStartChild() events for &lt;param1&gt; and &lt;param2&gt;.
  *
  * @author Glen Daniels (gdaniels@apache.org)
  */

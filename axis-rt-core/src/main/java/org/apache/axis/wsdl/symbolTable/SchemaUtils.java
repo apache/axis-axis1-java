@@ -1338,18 +1338,18 @@ public class SchemaUtils {
     /**
      * If the specified node represents an element that references a collection
      * then return the qname repesenting the component of the collection.
-     * <p/>
-     * <xsd:element name="alias" type="xsd:string" maxOccurs="unbounded"/>
+     * <p>
+     * &lt;xsd:element name="alias" type="xsd:string" maxOccurs="unbounded"/&gt;
      * returns qname for"xsd:string"
-     * <p/>
-     * <xsd:complexType>
-     *  <xsd:sequence>
-     *   <xsd:element name="alias" type="xsd:string" maxOccurs="unbounded"/>
-     *  </xsd:sequence>
-     * </xsd:complexType>
+     * <p>
+     * &lt;xsd:complexType&gt;
+     *  &lt;xsd:sequence&gt;
+     *   &lt;xsd:element name="alias" type="xsd:string" maxOccurs="unbounded"/&gt;
+     *  &lt;/xsd:sequence&gt;
+     * &lt;/xsd:complexType&gt;
      * returns qname for"xsd:string"
-     * <p/>
-     * <xsd:element ref="alias"  maxOccurs="unbounded"/>
+     * <p>
+     * &lt;xsd:element ref="alias"  maxOccurs="unbounded"/&gt;
      * returns qname for "alias"
      *
      * @param node is the Node
@@ -1881,17 +1881,17 @@ public class SchemaUtils {
      * Return the attribute names and types if any in the node
      * The even indices are the attribute types (TypeEntry) and
      * the odd indices are the corresponding names (Strings).
-     * <p/>
+     * <p>
      * Example:
-     * <complexType name="Person">
-     * <sequence>
-     * <element minOccurs="1" maxOccurs="1" name="Age" type="double" />
-     * <element minOccurs="1" maxOccurs="1" name="ID" type="xsd:float" />
-     * </sequence>
-     * <attribute name="Name" type="string" />
-     * <attribute name="Male" type="boolean" />
-     * <attributeGroup ref="s0:MyAttrSet" />
-     * </complexType>
+     * &lt;complexType name="Person"&gt;
+     * &lt;sequence&gt;
+     * &lt;element minOccurs="1" maxOccurs="1" name="Age" type="double" /&gt;
+     * &lt;element minOccurs="1" maxOccurs="1" name="ID" type="xsd:float" /&gt;
+     * &lt;/sequence&gt;
+     * &lt;attribute name="Name" type="string" /&gt;
+     * &lt;attribute name="Male" type="boolean" /&gt;
+     * &lt;attributeGroup ref="s0:MyAttrSet" /&gt;
+     * &lt;/complexType&gt;
      *
      * @param node
      * @param symbolTable
@@ -2062,8 +2062,8 @@ public class SchemaUtils {
     }
 
     /**
-     * Returns whether the specified node represents a <xsd:simpleType>
-     * with a nested <xsd:list itemType="...">.
+     * Returns whether the specified node represents a &lt;xsd:simpleType&gt;
+     * with a nested &lt;xsd:list itemType="..."&gt;.
      * @param node
      * @return
      */
@@ -2073,7 +2073,7 @@ public class SchemaUtils {
     }
 
     /**
-     * Returns the value of itemType attribute of <xsd:list> in <xsd:simpleType>
+     * Returns the value of itemType attribute of &lt;xsd:list&gt; in &lt;xsd:simpleType&gt;
      * @param node
      * @return
      */

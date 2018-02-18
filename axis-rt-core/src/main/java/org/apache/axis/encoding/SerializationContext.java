@@ -79,7 +79,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * and element stacks.
  *
  * @author Glen Daniels (gdaniels@apache.org)
- * @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class SerializationContext implements javax.xml.rpc.encoding.SerializationContext
 {
@@ -406,7 +406,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
      * return a valid prefix - if the given URI is already mapped in this
      * serialization, we return the previous prefix.  If it is not mapped,
      * we will add a new mapping and return a generated prefix of the form
-     * "ns<num>".
+     * "ns&lt;num&gt;".
      * @param uri is the namespace uri
      * @return prefix
      */
@@ -419,7 +419,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
      * Get a prefix for the given namespace URI.  If one has already been
      * defined in this serialization, use that.  Otherwise, map the passed
      * default prefix to the URI, and return that.  If a null default prefix
-     * is passed, use one of the form "ns<num>"
+     * is passed, use one of the form "ns&lt;num&gt;"
      */
     public String getPrefixForURI(String uri, String defaultPrefix)
     {
@@ -430,7 +430,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
      * Get a prefix for the given namespace URI.  If one has already been
      * defined in this serialization, use that.  Otherwise, map the passed
      * default prefix to the URI, and return that.  If a null default prefix
-     * is passed, use one of the form "ns<num>"
+     * is passed, use one of the form "ns&lt;num&gt;"
      */
     public String getPrefixForURI(String uri, String defaultPrefix, boolean attribute)
     {
@@ -522,7 +522,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
     }
 
     /**
-     * Convert QName to a string of the form <prefix>:<localpart>
+     * Convert QName to a string of the form &lt;prefix&gt;:&lt;localpart&gt;
      * @param qName
      * @return prefixed qname representation for serialization.
      */
@@ -571,7 +571,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
     }
 
     /**
-     * Convert attribute QName to a string of the form <prefix>:<localpart>
+     * Convert attribute QName to a string of the form &lt;prefix&gt;:&lt;localpart&gt;
      * There are slightly different rules for attributes:
      *  - There is no default namespace
      *  - any attribute in a namespace must have a prefix
@@ -819,7 +819,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
      * @param attributes are additional attributes
      * @param value is the object to serialize
      * @param xmlType is the qname of the type or null.
-     * @param javaType is the java type of the value
+     * @param javaClass is the java type of the value
      * @param sendNull determines whether to send null values.
      * @param sendType determines whether to set xsi:type attribute.
      */
@@ -1276,7 +1276,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
 
     /**
      * Convenience operation to write out (to Writer) the String
-     * properly encoded with xml entities (like &amp)
+     * properly encoded with xml entities (like &amp;amp;)
      * @param string is the String to write.
      */
     public void writeSafeString(String string)

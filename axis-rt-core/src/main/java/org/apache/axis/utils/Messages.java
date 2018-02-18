@@ -137,7 +137,7 @@ public class Messages {
     /**
       * Get a message from resource.properties from the package of the given object.
       * @param key The resource key
-      * @param array An array of objects to place in corresponding variables
+      * @param args An array of objects to place in corresponding variables
       * @return The formatted message
       */
     public static String getMessage(String key, String[] args)

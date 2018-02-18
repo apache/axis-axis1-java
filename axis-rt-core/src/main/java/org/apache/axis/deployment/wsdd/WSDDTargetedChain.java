@@ -136,7 +136,6 @@ public abstract class WSDDTargetedChain
 
     /**
      *
-     * @param pivot XXX
      * @param registry XXX
      * @return XXX
      * @throws ConfigurationException XXX

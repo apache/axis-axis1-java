@@ -35,9 +35,9 @@ import java.util.Iterator;
  * Parse the WSDD operation elements.
  * 
  * Example: 
- * <operation name="name" qname="element QName" returnQName="QName">
- *   <parameter ... />
- * </operation>
+ * &lt;operation name="name" qname="element QName" returnQName="QName"&gt;
+ *   &lt;parameter ... /&gt;
+ * &lt;/operation&gt;
  * 
  */
 public class WSDDOperation extends WSDDElement
@@ -55,7 +55,7 @@ public class WSDDOperation extends WSDDElement
     /**
      * Constructor from XML
      *
-     * @param e (Element) the <operation> element
+     * @param e (Element) the &lt;operation&gt; element
      * @param parent our ServiceDesc.
      * @throws WSDDException XXX
      */

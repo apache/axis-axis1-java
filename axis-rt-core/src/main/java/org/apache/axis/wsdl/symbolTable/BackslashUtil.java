@@ -78,7 +78,7 @@ public class BackslashUtil implements java.io.Serializable {
 	}
 	
 	/**
-	 * Slave method for applyBackslashes & stripBackslashes .
+	 * Slave method for applyBackslashes &amp; stripBackslashes .
 	 * 
 	 */
 	public static String transformBackslashes(String string, boolean delete) {

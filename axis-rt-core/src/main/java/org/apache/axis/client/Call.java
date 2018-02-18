@@ -2340,7 +2340,7 @@ public class Call implements javax.xml.rpc.Call {
      *             invoked method.  If any of these objects are RPCParams,
      *             Axis will use the embedded name of the RPCParam as the
      *             name of the parameter.  Otherwise, we will serialize
-     *             each argument as an XML element called "arg<n>".
+     *             each argument as an XML element called "arg&lt;n&gt;".
      * @return a deserialized Java Object containing the return value
      * @exception AxisFault
      */
@@ -2382,7 +2382,7 @@ public class Call implements javax.xml.rpc.Call {
      *             invoked method.  If any of these objects are RPCParams,
      *             Axis will use the embedded name of the RPCParam as the
      *             name of the parameter.  Otherwise, we will serialize
-     *             each argument as an XML element called "arg<n>".
+     *             each argument as an XML element called "arg&lt;n&gt;".
      * @return a deserialized Java Object containing the return value
      * @exception AxisFault
      */
@@ -2893,7 +2893,7 @@ public class Call implements javax.xml.rpc.Call {
      *
      * Set the service so that it defers missing property gets to the
      * Call.  So when client-side Handlers get at the MessageContext,
-     * the property scoping will be MC -> SOAPService -> Call
+     * the property scoping will be MC -&gt; SOAPService -&gt; Call
      */
     public void setSOAPService(SOAPService service)
     {

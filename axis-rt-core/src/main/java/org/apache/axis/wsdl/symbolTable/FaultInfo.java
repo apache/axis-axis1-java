@@ -51,11 +51,11 @@ public class FaultInfo {
 
     /**
      * This constructor creates FaultInfo for a binding fault.
-     * <p/>
+     * <p>
      * If the part of the fault is a type, then the QName is
      * derived from the element name and the provided namespace
      * (this namespace SHOULD come from the binding).
-     * <p/>
+     * <p>
      * If the part of the fault is an element, then the QName is
      * the QName of the element, and the given namespace is ignored.
      * 
@@ -187,11 +187,11 @@ public class FaultInfo {
     /**
      * Return the QName of a fault.  This method may return null if no parts
      * are in the fault message.
-     * <p/>
+     * <p>
      * If the part of the fault is a type, then the QName is
      * derived from the element name and the provided namespace
      * (this namespace SHOULD come from the binding).
-     * <p/>
+     * <p>
      * If the part of the fault is an element, then the QName is
      * the QName of the element, and the given namespace is ignored.
      * 

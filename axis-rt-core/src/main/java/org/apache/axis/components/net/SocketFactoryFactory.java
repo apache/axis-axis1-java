@@ -56,7 +56,7 @@ public class SocketFactoryFactory {
     /**
      * Returns a copy of the environment's default socket factory.
      * 
-     * @param protocol Today this only supports "http" & "https".
+     * @param protocol Today this only supports "http" &amp; "https".
      * @param attributes
      *
      * @return

@@ -93,8 +93,6 @@ public class SimpleSecurityProvider implements SecurityProvider {
 
     /** Authenticate a user from a username/password pair.
      *
-     * @param username the user name to check
-     * @param password the password to check
      * @return an AuthenticatedUser or null
      */
     public AuthenticatedUser authenticate(MessageContext msgContext) {

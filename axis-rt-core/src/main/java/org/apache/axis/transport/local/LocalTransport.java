@@ -81,8 +81,8 @@ public class LocalTransport extends Transport
 
     /**
      * Set up any transport-specific derived properties in the message context.
-     * @param context the context to set up
-     * @param message the client service instance
+     * @param mc the context to set up
+     * @param call the client service instance
      * @param engine the engine containing the registries
      */
     public void setupMessageContextImpl(MessageContext mc,
