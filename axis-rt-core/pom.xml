@@ -156,28 +156,10 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <excludes>
-                        <!-- Jimi is not available in any public repository -->
-                        <exclude>org/apache/axis/components/image/JimiIO.java</exclude>
-                        <!-- Depends on classes from the IBM JDK -->
-                        <exclude>org/apache/axis/components/net/IBM*.java</exclude>
-                        <!-- TODO: contains reference to non existing class org.apache.axis.components.bridge.COMBridge -->
-                        <exclude>org/apache/axis/providers/ComProvider.java</exclude>
-                    </excludes>
                     <compilerArgument>
                         <!-- Necessary because we only support DOM 2 and SAAJ 1.2 -->
                         -Xbootclasspath/p:${project.build.directory}/endorsed/xmlParserAPIs.jar${path.separator}${project.build.directory}/endorsed/axis-saaj.jar
                     </compilerArgument>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <sourceFileExcludes>
-                        <sourceFileExclude>org/apache/axis/components/image/JimiIO.java</sourceFileExclude>
-                        <sourceFileExclude>org/apache/axis/components/net/IBM*.java</sourceFileExclude>
-                        <sourceFileExclude>org/apache/axis/providers/ComProvider.java</sourceFileExclude>
-                    </sourceFileExcludes>
                 </configuration>
             </plugin>
             <plugin>
