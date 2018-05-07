@@ -40,14 +40,14 @@ public class AxisXMLResource extends XMLResourceImpl {
      * 
      * <pre>
      * &lt;deployment xmlns="http://xml.apache.org/axis/wsdd/"
-     *             xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
-     *   &lt;transport name="http">
-     *     &lt;requestFlow>
-     *       &lt;handler type="URLMapper"/>
-     *       &lt;handler type="java:org.apache.axis.handlers.http.HTTPAuthHandler"/>
-     *     &lt;/requestFlow>
-     *   &lt;/transport>
-     * &lt;/deployment>
+     *             xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"&gt;
+     *   &lt;transport name="http"&gt;
+     *     &lt;requestFlow&gt;
+     *       &lt;handler type="URLMapper"/&gt;
+     *       &lt;handler type="java:org.apache.axis.handlers.http.HTTPAuthHandler"/&gt;
+     *     &lt;/requestFlow&gt;
+     *   &lt;/transport&gt;
+     * &lt;/deployment&gt;
      * </pre>
      * 
      * If the <tt>type</tt> attribute is assumed to be of type <tt>xsd:QName</tt>, then the
