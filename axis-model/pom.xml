@@ -67,7 +67,29 @@
         </dependency>
     </dependencies>
     <build>
+        <extensions>
+            <extension>
+                <groupId>com.github.veithen.cosmos</groupId>
+                <artifactId>p2-maven-connector</artifactId>
+                <version>0.3</version>
+            </extension>
+        </extensions>
         <plugins>
+            <plugin>
+                <groupId>com.github.veithen.cosmos</groupId>
+                <artifactId>emf-maven-plugin</artifactId>
+                <version>0.1-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-sources</goal>
+                        </goals>
+                        <configuration>
+                            <genmodel>model/axis.genmodel</genmodel>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
                 <executions>

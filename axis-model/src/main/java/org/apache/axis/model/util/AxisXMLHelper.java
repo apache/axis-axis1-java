@@ -22,6 +22,9 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axis.constants.Style;
+import org.apache.axis.constants.Use;
+import org.apache.axis.model.soap.impl.SOAPPackageImpl;
 import org.apache.axis.model.xml.impl.XmlPackageImpl;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EFactory;
@@ -51,8 +54,8 @@ public class AxisXMLHelper extends XMLHelperImpl {
         ignoreNamespaceForUnqualifiedQName = (String)options.get(AxisXMLResource.OPTION_IGNORE_NAMESPACE_FOR_UNQUALIFIED_QNAME);
     }
 
-    protected Object createFromString(EFactory eFactory, EDataType eDataType, String value) {
-        if (eDataType == XmlPackageImpl.eINSTANCE.getQName()) {
+    protected Object createFromString(EFactory eFactory, EDataType dataType, String value) {
+        if (dataType == XmlPackageImpl.eINSTANCE.getQName()) {
             String prefix;
             String localName;
             int idx = value.indexOf(':');
@@ -77,8 +80,22 @@ public class AxisXMLHelper extends XMLHelperImpl {
                 namespaceURI = "";
             }
             return new QName(namespaceURI, localName, prefix);
+        } else if (dataType == SOAPPackageImpl.eINSTANCE.getStyle()) {
+            return Style.getStyle(value);
+        } else if (dataType == SOAPPackageImpl.eINSTANCE.getUse()) {
+            return Use.getUse(value);
         } else {
-            return super.createFromString(eFactory, eDataType, value);
+            return super.createFromString(eFactory, dataType, value);
+        }
+    }
+
+    public String convertToString(EFactory factory, EDataType dataType, Object value) {
+        if (dataType == SOAPPackageImpl.eINSTANCE.getStyle()) {
+            return ((Style)value).getName();
+        } else if (dataType == SOAPPackageImpl.eINSTANCE.getUse()) {
+            return ((Use)value).getName();
+        } else {
+            return super.convertToString(factory, dataType, value);
         }
     }
 
