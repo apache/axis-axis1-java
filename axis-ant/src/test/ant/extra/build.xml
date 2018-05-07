@@ -1,10 +1,10 @@
 <?xml version="1.0" ?>
 <project>
   <target name="test">
-    <mkdir dir="${project.build.directory}/work/test/wsdl/extra"/>
+    <mkdir dir="${project.build.directory}/work/test/wsdl/extra/gen"/>
     
     <!-- Generate WSDL from java -->
-    <java2wsdl output="${project.build.directory}/work/test/wsdl/extra/MyService.wsdl"
+    <java2wsdl output="${project.build.directory}/work/test/wsdl/extra/gen/MyService.wsdl"
                className= "test.wsdl.extra.MyService"
                extraClasses="test.wsdl.extra.Extra"
                namespace="http://test.com/extraClasses"
@@ -14,12 +14,12 @@
     </java2wsdl>
     
     <!-- Verify files generated based on everything in WSDL -->
-    <wsdl2java url="${project.build.directory}/work/test/wsdl/extra/MyService.wsdl"
+    <wsdl2java url="${project.build.directory}/work/test/wsdl/extra/gen/MyService.wsdl"
                output="${project.build.directory}/work"
                all="yes"
                verbose="no"
                testcase="no">
-        <mapping namespace="http://test.com/extraClasses" package="test.wsdl.extra"/>
+        <mapping namespace="http://test.com/extraClasses" package="test.wsdl.extra.gen"/>
     </wsdl2java>
   </target>
 </project>

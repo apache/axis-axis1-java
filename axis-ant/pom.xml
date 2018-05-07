@@ -194,7 +194,7 @@
                                     </allowedFiles>
                                 </fileSet>
                                 <fileSet>
-                                    <directory>${project.build.directory}/work/test/wsdl/extra</directory>
+                                    <directory>${project.build.directory}/work/test/wsdl/extra/gen</directory>
                                     <expectedFiles>
                                         <expectedFile>Extra.java</expectedFile> <!-- this is the important one -->
                                         <expectedFile>MyService.java</expectedFile>
