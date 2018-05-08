@@ -1,7 +1,8 @@
 dist: trusty
 language: java
+# There are test cases that use ImageIO with JPEG and that only work on Oracle JDK.
 jdk:
-  - openjdk8
+  - oraclejdk8
 install: echo NOOP Skipping pre-fetch of Maven dependencies
 cache:
   directories:
