@@ -186,7 +186,7 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.0.0</version>
                     <configuration>
-                        <source>1.4</source>
+                        <source>${javaVersion}</source>
                         <tags>
                             <!-- Custom tags used by EMF -->
                             <tag>
