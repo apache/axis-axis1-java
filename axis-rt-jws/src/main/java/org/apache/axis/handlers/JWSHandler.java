@@ -19,9 +19,6 @@ package org.apache.axis.handlers;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
-import org.apache.axis.components.compiler.Compiler;
-import org.apache.axis.components.compiler.CompilerError;
-import org.apache.axis.components.compiler.CompilerFactory;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.constants.Scope;
 import org.apache.axis.handlers.soap.SOAPService;
@@ -38,10 +35,20 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
+
+import javax.tools.Diagnostic;
+import javax.tools.Diagnostic.Kind;
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaCompiler.CompilationTask;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.StandardLocation;
+import javax.tools.ToolProvider;
 
 /** A <code>JWSHandler</code> sets the target service and JWS filename
  * in the context depending on the JWS configuration and the target URL.
@@ -192,13 +199,17 @@ public class JWSHandler extends BasicHandler
                 log.debug("javac " + jFile );
                 // Process proc = rt.exec( "javac " + jFile );
                 // proc.waitFor();
-                Compiler          compiler = CompilerFactory.getCompiler();
+                JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+                StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
                 
-                compiler.setClasspath(ClasspathUtils.getDefaultClasspath(msgContext));
-                compiler.setDestination(outdir);
-                compiler.addFile(jFile);
+                fileManager.setLocation(StandardLocation.CLASS_PATH, ClasspathUtils.getDefaultClasspath(msgContext));
+                fileManager.setLocation(StandardLocation.CLASS_OUTPUT, Collections.singletonList(new File(outdir)));
                 
-                boolean result   = compiler.compile();
+                DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<JavaFileObject>();
+                CompilationTask task = compiler.getTask(null, fileManager, diagnosticCollector, null, null,
+                        fileManager.getJavaFileObjectsFromFiles(Collections.singletonList(new File(jFile))));
+                
+                boolean result = task.call();
                 
                 /* Delete the temporary *.java file and check return code */
                 /**********************************************************/
@@ -216,19 +227,17 @@ public class JWSHandler extends BasicHandler
                     Element         root = doc.createElementNS("", "Errors");
                     StringBuffer message = new StringBuffer("Error compiling ");
                     message.append(jFile);
-                    message.append(":\n");
-                    
-                    List errors = compiler.getErrors();
-                    int count = errors.size();
-                    for (int i = 0; i < count; i++) {
-                        CompilerError error = (CompilerError) errors.get(i);
-                        if (i > 0) message.append("\n");
-                        message.append("Line ");
-                        message.append(error.getStartLine());
-                        message.append(", column ");
-                        message.append(error.getStartColumn());
-                        message.append(": ");
-                        message.append(error.getMessage());
+                    message.append(":");
+
+                    for (Diagnostic<? extends JavaFileObject> diagnostic : diagnosticCollector.getDiagnostics()) {
+                        if (diagnostic.getKind() == Kind.ERROR) {
+                            message.append("\nLine ");
+                            message.append(diagnostic.getLineNumber());
+                            message.append(", column ");
+                            message.append(diagnostic.getStartPosition());
+                            message.append(": ");
+                            message.append(diagnostic.getMessage(null));
+                        }
                     }
                     root.appendChild( doc.createTextNode( message.toString() ) );
                     throw new AxisFault( "Server.compileError",

@@ -27,6 +27,9 @@ import java.io.FileFilter;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -50,23 +53,19 @@ public class ClasspathUtils {
      * @param dirPaths The string containing the directory path or list of
      *                 directory paths.
      * @return The file paths of the jar files in the directories. This is an
-     *         empty string if no files were found, and is terminated by an
-     *         additional pathSeparator in all other cases.
+     *         empty list if no files were found.
      */
-    public static String expandDirs(String dirPaths) {
+    public static List<File> expandDirs(String dirPaths) {
         StringTokenizer st = new StringTokenizer(dirPaths, File.pathSeparator);
-        StringBuffer buffer = new StringBuffer();
+        List<File> files = new ArrayList<File>();
         while (st.hasMoreTokens()) {
             String d = st.nextToken();
             File dir = new File(d);
             if (dir.isDirectory()) {
-                File[] files = dir.listFiles(new JavaArchiveFilter());
-                for (int i = 0; i < files.length; i++) {
-                    buffer.append(files[i]).append(File.pathSeparator);
-                }
+                files.addAll(Arrays.asList(dir.listFiles(new JavaArchiveFilter())));
             }
         }
-        return buffer.toString();
+        return files;
     }
 
     /**
@@ -90,8 +89,8 @@ public class ClasspathUtils {
      * @param msgContext
      * @return default classpath
      */ 
-    public static String getDefaultClasspath(MessageContext msgContext) {
-        StringBuffer classpath = new StringBuffer();
+    public static List<File> getDefaultClasspath(MessageContext msgContext) {
+        List<File> classpath = new ArrayList<File>();
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         fillClassPath(cl, classpath);
 
@@ -100,8 +99,7 @@ public class ClasspathUtils {
 
         String webBase = (String) msgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETLOCATION);
         if (webBase != null) {
-            classpath.append(webBase + File.separatorChar + "classes" +
-                    File.pathSeparatorChar);
+            classpath.add(new File(webBase, "classes"));
             try {
                 String libBase = webBase + File.separatorChar + "lib";
                 File libDir = new File(libBase);
@@ -109,10 +107,7 @@ public class ClasspathUtils {
                 for (int i = 0; i < jarFiles.length; i++) {
                     String jarFile = jarFiles[i];
                     if (jarFile.endsWith(".jar")) {
-                        classpath.append(libBase +
-                                File.separatorChar +
-                                jarFile +
-                                File.pathSeparatorChar);
+                        classpath.add(new File(libBase, jarFile));
                     }
                 }
             } catch (Exception e) {
@@ -138,7 +133,8 @@ public class ClasspathUtils {
         
         // boot classpath isn't found in above search
         getClassPathFromProperty(classpath, "sun.boot.class.path");
-        return classpath.toString();
+        
+        return classpath;
     }
 
     /**
@@ -146,17 +142,12 @@ public class ClasspathUtils {
      * @param classpath
      * @param property
      */ 
-    private static void getClassPathFromDirectoryProperty(StringBuffer classpath, String property) {
+    private static void getClassPathFromDirectoryProperty(List<File> classpath, String property) {
         String dirs = AxisProperties.getProperty(property);
-        String path = null;
         try {
-            path = ClasspathUtils.expandDirs(dirs);
+            classpath.addAll(ClasspathUtils.expandDirs(dirs));
         } catch (Exception e) {
             // Oh well.  No big deal.
-        }
-        if (path != null) {
-            classpath.append(path);
-            classpath.append(File.pathSeparatorChar);
         }
     }
 
@@ -165,11 +156,12 @@ public class ClasspathUtils {
      * @param classpath
      * @param property
      */ 
-    private static void getClassPathFromProperty(StringBuffer classpath, String property) {
+    private static void getClassPathFromProperty(List<File> classpath, String property) {
         String path = AxisProperties.getProperty(property);
         if (path != null) {
-            classpath.append(path);
-            classpath.append(File.pathSeparatorChar);
+            for (String item : path.split(File.pathSeparator)) {
+                classpath.add(new File(item));
+            }
         }
     }
 
@@ -178,7 +170,7 @@ public class ClasspathUtils {
      * @param cl
      * @param classpath
      */
-    private static void fillClassPath(ClassLoader cl, StringBuffer classpath) {
+    private static void fillClassPath(ClassLoader cl, List<File> classpath) {
         while (cl != null) {
             if (cl instanceof URLClassLoader) {
                 URL[] urls = ((URLClassLoader) cl).getURLs();
@@ -187,8 +179,7 @@ public class ClasspathUtils {
                     //If it is a drive letter, adjust accordingly.
                     if (path.length() >= 3 && path.charAt(0) == '/' && path.charAt(2) == ':')
                         path = path.substring(1);
-                    classpath.append(URLDecoder.decode(path));
-                    classpath.append(File.pathSeparatorChar);
+                    classpath.add(new File(URLDecoder.decode(path)));
 
                     // if its a jar extract Class-Path entries from manifest
                     File file = new File(urls[i].getFile());
@@ -208,8 +199,7 @@ public class ClasspathUtils {
                                             StringTokenizer st = new StringTokenizer(s, " ");
                                             while (st.hasMoreTokens()) {
                                                 String t = st.nextToken();
-                                                classpath.append(base + File.separatorChar + t);
-                                                classpath.append(File.pathSeparatorChar);
+                                                classpath.add(new File(base, t));
                                             }
                                         }
                                     }

@@ -330,6 +330,8 @@
                                     artifactId = 'java14-sun'
                                 } else if (javaVersion == '1.5') {
                                     artifactId = 'java15-sun'
+                                } else if (javaVersion == '1.6') {
+                                    artifactId = 'java16-sun'
                                 }
                                 project.properties['signatureArtifactId'] = artifactId
                                 project.properties['signatureVersion'] = '1.0'
