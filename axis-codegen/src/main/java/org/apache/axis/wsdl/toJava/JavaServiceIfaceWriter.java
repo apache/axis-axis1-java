@@ -31,7 +31,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * This is Wsdl2java's service writer.  It writes the <serviceName>.java file.
+ * This is Wsdl2java's service writer.  It writes the &lt;serviceName&gt;.java file.
  */
 public class JavaServiceIfaceWriter extends JavaClassWriter {
 

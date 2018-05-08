@@ -24,7 +24,7 @@ import java.io.PrintWriter;
 import java.util.Vector;
 
 /**
- * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
+ * This is Wsdl2java's Complex Type Writer.  It writes the &lt;typeName&gt;.java file.
  */
 public class JavaEnumTypeWriter extends JavaClassWriter {
 

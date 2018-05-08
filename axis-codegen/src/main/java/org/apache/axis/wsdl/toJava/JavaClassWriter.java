@@ -29,16 +29,13 @@ import java.io.PrintWriter;
  * JavaWriter.  So the Java WSDL writers (JavaPortTypeWriter, JavaBindingWriter,
  * etc.) each calls a file writer (JavaStubWriter, JavaSkelWriter, etc.) for
  * each file that that WSDL generates.
- * <p/>
  * <p>For example, when Emitter calls JavaWriterFactory for a Binding Writer, it
  * returns a JavaBindingWriter.  JavaBindingWriter, in turn, contains a
  * JavaStubWriter, JavaSkelWriter, and JavaImplWriter since a Binding may cause
  * a stub, skeleton, and impl template to be generated.
- * <p/>
  * <p>Note that the writers that are given to Emitter by JavaWriterFactory DO NOT
  * extend JavaWriter.  They simply implement Writer and delegate the actual
  * task of writing to extensions of JavaWriter.
- * <p/>
  * <p>All of Wsdl2java's Writer implementations follow a common behaviour.
  * JavaWriter is the abstract base class that dictates this common behaviour.
  * Many of the files generated are .java files, so this abstract class -
@@ -79,7 +76,7 @@ import java.io.PrintWriter;
  * <dd> You should not need to override this method.  It simply closes the
  * PrintWriter.
  * </dl>
- * <p/>
+ * <p>
  * Additional behaviour that JavaClassWriter introduces beyond JavaWriter is
  * related to the class header and definition:
  * <dl>
@@ -136,7 +133,7 @@ public abstract class JavaClassWriter extends JavaWriter {
 
     /**
      * Return the file name as a string of the form:
-     * "<directory-ized fully-qualified classname>.java"
+     * "&lt;directory-ized fully-qualified classname&gt;.java"
      * 
      * @return 
      */
@@ -246,7 +243,7 @@ public abstract class JavaClassWriter extends JavaWriter {
 
     /**
      * Returns the appropriate extends clause.  This default implementation
-     * simply returns "", but if you want "extends <class/interface list> "
+     * simply returns "", but if you want "extends &lt;class/interface list&gt; "
      * then you must override this method.
      * 
      * @return ""
@@ -257,7 +254,7 @@ public abstract class JavaClassWriter extends JavaWriter {
 
     /**
      * Returns the appropriate implements clause.  This default implementation
-     * simply returns "", but if you want "implements <interface list> " then
+     * simply returns "", but if you want "implements &lt;interface list&gt; " then
      * you must override this method.
      * 
      * @return ""

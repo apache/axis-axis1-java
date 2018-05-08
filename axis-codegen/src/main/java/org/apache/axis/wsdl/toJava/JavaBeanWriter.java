@@ -34,7 +34,7 @@ import java.util.Set;
 import java.util.Vector;
 
 /**
- * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
+ * This is Wsdl2java's Complex Type Writer.  It writes the &lt;typeName&gt;.java file.
  */
 public class JavaBeanWriter extends JavaClassWriter {
 
@@ -535,7 +535,7 @@ public class JavaBeanWriter extends JavaClassWriter {
     /**
      * Returns the appropriate extends text
      * 
-     * @return "" or " extends <class> "
+     * @return "" or " extends &lt;class&gt; "
      */
     protected String getExtendsText() {
 
@@ -554,7 +554,7 @@ public class JavaBeanWriter extends JavaClassWriter {
     /**
      * Returns the appropriate implements text
      * 
-     * @return " implements <classes> "
+     * @return " implements &lt;classes&gt; "
      */
     protected String getImplementsText() {
 

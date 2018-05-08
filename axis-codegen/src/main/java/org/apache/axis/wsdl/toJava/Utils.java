@@ -913,13 +913,13 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     /**
      * Return a constructor for the provided Parameter
      * This string will be suitable for assignment:
-     * <p/>
+     * <p>
      * Foo var = <i>string returned</i>
-     * <p/>
+     * <p>
      * Handles basic java types (int, float, etc), wrapper types (Integer, etc)
      * and certain java.math (BigDecimal, BigInteger) types.
      * Will also handle all Axis specific types (org.apache.axis.types.*)
-     * <p/>
+     * <p>
      * Caller should expect to wrap the construction in a try/catch block
      * if bThrow is set to <i>true</i>.
      *

@@ -41,8 +41,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * This is Wsdl2java's skeleton writer.  It writes the <BindingName>Skeleton.java
- * file which contains the <bindingName>Skeleton class.
+ * This is Wsdl2java's skeleton writer.  It writes the &lt;BindingName&gt;Skeleton.java
+ * file which contains the &lt;bindingName&gt;Skeleton class.
  */
 public class JavaSkelWriter extends JavaClassWriter {
 
@@ -73,7 +73,7 @@ public class JavaSkelWriter extends JavaClassWriter {
     }    // ctor
 
     /**
-     * Returns "implements <SEI>, org.apache.axis.wsdl.Skeleton ".
+     * Returns "implements &lt;SEI&gt;, org.apache.axis.wsdl.Skeleton ".
      * 
      * @return 
      */

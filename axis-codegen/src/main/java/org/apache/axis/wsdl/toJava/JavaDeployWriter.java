@@ -161,7 +161,7 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Write out deployment and undeployment instructions for each WSDL service
      *
-     * @param pw
+     * @param deployment
      * @throws IOException
      */
     protected void writeDeployServices(Deployment deployment) throws IOException {
@@ -192,7 +192,7 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Write out bean mappings for each type
      *
-     * @param pw
+     * @param service
      * @param binding
      * @param hasLiteral
      * @param hasMIME
@@ -301,7 +301,7 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Write out deployment and undeployment instructions for given WSDL port
      *
-     * @param pw
+     * @param deployment
      * @param port
      * @param service
      * @param bEntry
@@ -375,7 +375,7 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Write out deployment instructions for given WSDL binding
      *
-     * @param pw
+     * @param service
      * @param bEntry
      * @throws IOException
      */
@@ -498,7 +498,7 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Raw routine that writes out the operation and parameters.
      *
-     * @param pw
+     * @param service
      * @param javaOperName
      * @param elementQName
      * @param returnQName

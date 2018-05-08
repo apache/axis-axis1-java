@@ -33,8 +33,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * This is Wsdl2java's implementation template writer.  It writes the <BindingName>Impl.java
- * file which contains the <bindingName>Impl class.
+ * This is Wsdl2java's implementation template writer.  It writes the &lt;BindingName&gt;Impl.java
+ * file which contains the &lt;bindingName&gt;Impl class.
  */
 public class JavaImplWriter extends JavaClassWriter {
 
@@ -98,7 +98,7 @@ public class JavaImplWriter extends JavaClassWriter {
     /**
      * Returns the appropriate implements text
      * 
-     * @return " implements <classes>"
+     * @return " implements &lt;classes&gt;"
      */
     protected String getImplementsText() {
 

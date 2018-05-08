@@ -61,8 +61,8 @@ import java.util.Comparator;
 import java.util.Collections;
 
 /**
- * This is Wsdl2java's stub writer.  It writes the <BindingName>Stub.java
- * file which contains the <bindingName>Stub class.
+ * This is Wsdl2java's stub writer.  It writes the &lt;BindingName&gt;Stub.java
+ * file which contains the &lt;bindingName&gt;Stub class.
  */
 public class JavaStubWriter extends JavaClassWriter {
 
@@ -137,7 +137,7 @@ public class JavaStubWriter extends JavaClassWriter {
     }    // getExtendsText
 
     /**
-     * Returns "implements <SEI> ".
+     * Returns "implements &lt;SEI&gt; ".
      * 
      * @return 
      */

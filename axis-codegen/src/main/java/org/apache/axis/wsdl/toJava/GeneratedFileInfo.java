@@ -145,8 +145,7 @@ public class GeneratedFileInfo {
     /**
      * Lookup an entry by file name
      * 
-     * @param file     name you want info about
-     * @param fileName 
+     * @param fileName name you want info about
      * @return The entry for the file name specified.  Null if not found
      */
     public Entry findName(String fileName) {
@@ -166,8 +165,7 @@ public class GeneratedFileInfo {
     /**
      * Lookup an entry by class name
      * 
-     * @param class     name you want info about
-     * @param className 
+     * @param className name you want info about
      * @return The entry for the class specified.  Null if not found
      */
     public Entry findClass(String className) {

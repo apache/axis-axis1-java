@@ -32,7 +32,7 @@ import java.util.Vector;
 import java.util.Set;
 
 /**
- * This is Wsdl2java's Helper Type Writer.  It writes the <typeName>.java file.
+ * This is Wsdl2java's Helper Type Writer.  It writes the &lt;typeName&gt;.java file.
  */
 public class JavaBeanHelperWriter extends JavaClassWriter {
 
@@ -143,7 +143,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
     }    // registerFile
 
     /**
-     * Return the string:  "Generating <file>".
+     * Return the string:  "Generating &lt;file&gt;".
      * only if we are going to generate a new file.
      * 
      * @param file 

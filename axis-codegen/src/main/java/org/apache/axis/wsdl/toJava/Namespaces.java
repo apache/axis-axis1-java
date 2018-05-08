@@ -25,7 +25,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 /**
- * This class is essentially a HashMap of <namespace, package name> pairs with
+ * This class is essentially a HashMap of &lt;namespace, package name&gt; pairs with
  * a few extra wizzbangs.
  */
 public class Namespaces extends HashMap {

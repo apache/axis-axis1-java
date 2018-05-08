@@ -26,7 +26,7 @@ import java.io.IOException;
 
 /**
  * This is Wsdl2java's Binding Writer.  It writes the following files, as appropriate:
- * <bindingName>Stub.java, <bindingName>Skeleton.java, <bindingName>Impl.java.
+ * &lt;bindingName&gt;Stub.java, &lt;bindingName&gt;Skeleton.java, &lt;bindingName&gt;Impl.java.
  */
 public class JavaBindingWriter implements Generator {
 

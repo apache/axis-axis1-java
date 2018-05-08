@@ -37,7 +37,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * This is Wsdl2java's TestCase writer.  It writes the <serviceName>TestCase.java file.
+ * This is Wsdl2java's TestCase writer.  It writes the &lt;serviceName&gt;TestCase.java file.
  */
 public class JavaTestCaseWriter extends JavaClassWriter {
 

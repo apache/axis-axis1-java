@@ -27,8 +27,8 @@ import java.io.PrintWriter;
 import java.util.Vector;
 
 /**
- * This is Wsdl2java's Fault Writer.  It writes the <faultName>.java file.
- * <p/>
+ * This is Wsdl2java's Fault Writer.  It writes the &lt;faultName&gt;.java file.
+ * <p>
  * NOTE: This only writes simple type faults, the JavaTypeWriter emits
  * faults that are complex types.
  */

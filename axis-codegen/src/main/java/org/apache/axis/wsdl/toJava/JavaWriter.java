@@ -32,16 +32,13 @@ import java.util.StringTokenizer;
  * JavaWriter.  So the Java WSDL writers (JavaPortTypeWriter, JavaBindingWriter,
  * etc.) each calls a file writer (JavaStubWriter, JavaSkelWriter, etc.) for
  * each file that that WSDL generates.
- * <p/>
  * <p>For example, when Emitter calls JavaWriterFactory for a Binding Writer, it
  * returns a JavaBindingWriter.  JavaBindingWriter, in turn, contains a
  * JavaStubWriter, JavaSkelWriter, and JavaImplWriter since a Binding may cause
  * a stub, skeleton, and impl template to be generated.
- * <p/>
  * <p>Note that the writers that are given to Emitter by JavaWriterFactory DO NOT
  * extend JavaWriter.  They simply implement Writer and delegate the actual
  * task of writing to extensions of JavaWriter.
- * <p/>
  * <p>All of Wsdl2java's Writer implementations follow a common behaviour.
  * JavaWriter is the abstract base class that dictates this common behaviour.
  * This behaviour is primarily placed within the generate method.  The generate
@@ -169,7 +166,7 @@ public abstract class JavaWriter implements Generator {
     }    // registerFile
 
     /**
-     * Return the string:  "Generating <file>".  Override this
+     * Return the string:  "Generating &lt;file&gt;".  Override this
      * method if you want to provide more information.
      *
      * @param file

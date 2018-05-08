@@ -24,7 +24,7 @@ import java.io.IOException;
 
 /**
  * This is Wsdl2java's Service Writer.  It writes the following files, as appropriate:
- * <serviceName>.java, <serviceName>TestCase.java.
+ * &lt;serviceName&gt;.java, &lt;serviceName&gt;TestCase.java.
  */
 public class JavaServiceWriter implements Generator {
 

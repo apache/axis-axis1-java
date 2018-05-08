@@ -349,7 +349,7 @@ public class Emitter extends Parser {
     }    // setNStoPkg
 
     /**
-     * Set a map of namespace -> Java package names
+     * Set a map of namespace -&gt; Java package names
      * 
      * @param map 
      */
@@ -358,7 +358,7 @@ public class Emitter extends Parser {
     }
 
     /**
-     * Get the map of namespace -> Java package names
+     * Get the map of namespace -&gt; Java package names
      * 
      * @return 
      */
@@ -583,7 +583,7 @@ public class Emitter extends Parser {
 
     /**
      * Emit appropriate Java files for a WSDL at a given URL.
-     * <p/>
+     * <p>
      * This method will time out after the number of milliseconds specified
      * by our timeoutms member.
      * 

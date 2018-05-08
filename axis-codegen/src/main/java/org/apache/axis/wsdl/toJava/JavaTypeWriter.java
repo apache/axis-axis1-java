@@ -30,7 +30,7 @@ import java.util.Collections;
 
 /**
  * This is Wsdl2java's Type Writer.  It writes the following files, as appropriate:
- * <typeName>.java, <typeName>Holder.java.
+ * &lt;typeName&gt;.java, &lt;typeName&gt;Holder.java.
  */
 public class JavaTypeWriter implements Generator {
 

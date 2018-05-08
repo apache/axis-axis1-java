@@ -27,8 +27,8 @@ import java.io.PrintWriter;
 import java.util.Iterator;
 
 /**
- * This is Wsdl2java's PortType Writer.  It writes the <portTypeName>.java file
- * which contains the <portTypeName> interface.
+ * This is Wsdl2java's PortType Writer.  It writes the &lt;portTypeName&gt;.java file
+ * which contains the &lt;portTypeName&gt; interface.
  */
 public class JavaInterfaceWriter extends JavaClassWriter {
 

@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * This is Wsdl2java's Holder Writer.  It writes the <typeName>Holder.java file.
+ * This is Wsdl2java's Holder Writer.  It writes the &lt;typeName&gt;Holder.java file.
  */
 public class JavaHolderWriter extends JavaClassWriter {
 

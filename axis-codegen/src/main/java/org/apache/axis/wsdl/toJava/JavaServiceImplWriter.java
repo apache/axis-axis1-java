@@ -38,7 +38,7 @@ import java.util.Vector;
 
 /**
  * This is Wsdl2java's service implementation writer.
- * It writes the <serviceName>Locator.java file.
+ * It writes the &lt;serviceName&gt;Locator.java file.
  */
 public class JavaServiceImplWriter extends JavaClassWriter {
 
@@ -74,7 +74,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
     }    // getExtendsText
 
     /**
-     * Returns "implements <serviceInterface>".
+     * Returns "implements &lt;serviceInterface&gt;".
      * 
      * @return 
      */
@@ -354,7 +354,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
     }    // writeWSDDServiceNameInfo
 
     /**
-     * Write the get<portName>() method.
+     * Write the get&lt;portName&gt;() method.
      * 
      * @param pw          
      * @param bindingType 
@@ -380,7 +380,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
     }    // writeGetPortName
 
     /**
-     * Write the get<portName>(URL) method.
+     * Write the get&lt;portName&gt;(URL) method.
      * 
      * @param pw              
      * @param bindingType     
@@ -410,7 +410,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
     }    // writeGetPortNameURL
 
     /**
-     * Write the set<portName>EndpointAddress(String) method.
+     * Write the set&lt;portName&gt;EndpointAddress(String) method.
      * 
      * @param pw       
      * @param portName 
