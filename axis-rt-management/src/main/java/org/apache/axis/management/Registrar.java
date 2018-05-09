@@ -22,8 +22,8 @@ import org.apache.commons.modeler.Registry;
 /**
  * class to act as a dynamic loading registrar to commons-modeler, so
  * as to autoregister stuff
- *
- * @link http://www.webweavertech.com/costin/archives/000168.html#000168
+ * <p>
+ * <a href="http://www.webweavertech.com/costin/archives/000168.html#000168">http://www.webweavertech.com/costin/archives/000168.html#000168</a>
  */
 public class Registrar {
     /**

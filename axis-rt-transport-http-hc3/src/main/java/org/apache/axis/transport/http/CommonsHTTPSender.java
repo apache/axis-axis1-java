@@ -312,7 +312,6 @@ public class CommonsHTTPSender extends BasicHandler {
      * a string or an array of strings (if there are more than one Set-Cookie)
      *
      * @param cookieName
-     * @param setCookieName
      * @param cookie
      * @param msgContext
      */

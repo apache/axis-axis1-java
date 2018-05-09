@@ -30,7 +30,7 @@ public interface CommonsHTTPClientProperties {
      * your system imposes on the number of open file descriptors a
      * single process may have.
      *
-     * @return an integer > 1
+     * @return an integer &gt; 1
      */
     public int getMaximumTotalConnections();
 
@@ -39,7 +39,7 @@ public interface CommonsHTTPClientProperties {
      * for a given host.  This setting is also constrained by 
      * the one returned from getMaximumTotalConnections.
      *
-     * @return an integer > 1
+     * @return an integer &gt; 1
      */
     public int getMaximumConnectionsPerHost();    
 
@@ -48,7 +48,7 @@ public interface CommonsHTTPClientProperties {
      * for an available connection from the pool.  An exception is raised
      * if the timeout is triggered.
      *
-     * @return an integer > 1 OR 0 for infinite timeout
+     * @return an integer &gt; 1 OR 0 for infinite timeout
      */
     public int getConnectionPoolTimeout();
 
@@ -56,7 +56,7 @@ public interface CommonsHTTPClientProperties {
      * Used to set the default amount of time, in milliseconds, spent waiting
      * for a connection. This can be overridden by the MessageContext
      *   
-     * @return an integer >= 0
+     * @return an integer &gt;= 0
      */
     public int getDefaultConnectionTimeout();
 
@@ -64,7 +64,7 @@ public interface CommonsHTTPClientProperties {
      * Used to set the default amount of time, in milliseconds, spent waiting
      * for a reponse. This can be overridden by the MessageContext
      *
-     * @return an integer >= 0
+     * @return an integer &gt;= 0
      */
     public int getDefaultSoTimeout();
 

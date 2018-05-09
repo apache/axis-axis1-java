@@ -54,10 +54,6 @@ import java.util.Vector;
  * display by the applet.
  *
  * @author Brian Price (pricebe@us.ibm.com)
- * xdoclet tags are not active yet; keep web.xml in sync
- * @web.servlet name="SOAPMonitorService"  display-name="SOAPMonitorService"  load-on-startup="100"
- * @web.servlet-mapping url-pattern="/SOAPMonitor"
- * @web.servlet-init-param name="SOAPMonitorPort" value="5001"
  */
 
 public class SOAPMonitorService extends HttpServlet {

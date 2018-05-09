@@ -31,9 +31,9 @@ import org.apache.axis.transport.http.AxisServlet;
  * <tt>web.xml</tt>:
  * 
  * <pre>
- * &lt;listener>
- *     &lt;listener-class>org.apache.axis.management.servlet.AxisServerMBeanExporter&lt;/listener-class>
- * &lt;/listener>
+ * &lt;listener&gt;
+ *     &lt;listener-class&gt;org.apache.axis.management.servlet.AxisServerMBeanExporter&lt;/listener-class&gt;
+ * &lt;/listener&gt;
  * </pre>
  * 
  * @author Andreas Veithen

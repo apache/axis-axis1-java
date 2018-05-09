@@ -1,7 +1,7 @@
 package org.apache.axis.encoding;
 
 /**
- * @author James M Snell <jasnell@us.ibm.com>
+ * @author James M Snell &lt;jasnell@us.ibm.com&gt;
  * @deprecated Please use DefaultSOAPEncodingTypeMappingImpl.java
  * @see org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl 
  */

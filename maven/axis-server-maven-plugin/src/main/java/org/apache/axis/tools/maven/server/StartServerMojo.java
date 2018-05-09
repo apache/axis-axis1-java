@@ -37,7 +37,7 @@ import org.codehaus.plexus.util.StringUtils;
 import org.xml.sax.InputSource;
 
 /**
- * Start a {@link org.apache.axis.server.standalone.StandaloneAxisServer} instance in a separate
+ * Start a <code>org.apache.axis.server.standalone.StandaloneAxisServer</code> instance in a separate
  * JVM.
  * 
  * @goal start-server

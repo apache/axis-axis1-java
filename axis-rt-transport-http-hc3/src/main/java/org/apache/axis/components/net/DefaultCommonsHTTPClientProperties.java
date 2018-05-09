@@ -95,7 +95,7 @@ public class DefaultCommonsHTTPClientProperties implements CommonsHTTPClientProp
      * Return the integer value associated with the property
      * axis.http.client.connection.pool.timeout or a default of 0.
      *
-     * @return an integer >= 0
+     * @return an integer &gt;= 0
      */
     public int getConnectionPoolTimeout() {
         int i = getIntegerProperty(CONNECTION_POOL_TIMEOUT_KEY, "0");
@@ -109,7 +109,7 @@ public class DefaultCommonsHTTPClientProperties implements CommonsHTTPClientProp
      * Return the integer value associated with the property
      * axis.http.client.connection.default.connection.timeout or a default of 0.
      *
-     * @return an integer >= 0
+     * @return an integer &gt;= 0
      */
     public int getDefaultConnectionTimeout() {
         int i = getIntegerProperty(CONNECTION_DEFAULT_CONNECTION_TIMEOUT_KEY, "0");
@@ -123,7 +123,7 @@ public class DefaultCommonsHTTPClientProperties implements CommonsHTTPClientProp
      * Return the integer value associated with the property
      * axis.http.client.connection.default.so.timeout or a default of 0.
      *
-     * @return an integer >= 0
+     * @return an integer &gt;= 0
      */
     public int getDefaultSoTimeout() {
         int i = getIntegerProperty(CONNECTION_DEFAULT_SO_TIMEOUT_KEY, "0");

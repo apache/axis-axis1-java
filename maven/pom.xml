@@ -76,6 +76,25 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <tags>
+                        <tag>
+                            <name>goal</name>
+                            <placement>X</placement>
+                        </tag>
+                        <tag>
+                            <name>phase</name>
+                            <placement>X</placement>
+                        </tag>
+                        <tag>
+                            <name>requiresDependencyResolution</name>
+                            <placement>X</placement>
+                        </tag>
+                    </tags>
+                </configuration>
+            </plugin>
+            <plugin>
                 <!-- This overrides the set of reports (we don't want to generate the reports defined in the parent POM) -->
                 <artifactId>maven-site-plugin</artifactId>
                 <configuration>
