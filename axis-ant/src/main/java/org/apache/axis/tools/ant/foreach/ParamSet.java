@@ -25,8 +25,8 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 /**
- * Inner class stores sets of <param>s.
- * It can hold <fileset>s or <item>s or both.
+ * Inner class stores sets of &lt;param&gt;s.
+ * It can hold &lt;fileset&gt;s or &lt;item&gt;s or both.
  * 
  * @author <a href="mailto:tpv@spamcop.net">Tim Vernum</a>
  * @author Davanum Srinivas

@@ -245,8 +245,8 @@ public class AdminClientTask extends MatchingTask {
      * </ul>
      * <p>If <code>-l</code> or <code>-h -p -s</code> are not set, the
      * AdminClient will invoke
-     * <code>http://localhost:8080/axis/servlet/AxisServlet</code>.</p>
-     * <p/>
+     * <code>http://localhost:8080/axis/servlet/AxisServlet</code>.
+     * <p>
      * outputs XML result or null in case of failure. In the case of multiple
      * commands, the XML results will be concatenated, separated by \n
      *

@@ -187,21 +187,6 @@
                     <version>3.0.0</version>
                     <configuration>
                         <source>${javaVersion}</source>
-                        <tags>
-                            <!-- Custom tags used by EMF -->
-                            <tag>
-                                <name>generated</name>
-                                <placement>X</placement>
-                            </tag>
-                            <tag>
-                                <name>model</name>
-                                <placement>X</placement>
-                            </tag>
-                            <tag>
-                                <name>ordered</name>
-                                <placement>X</placement>
-                            </tag>
-                        </tags>
                     </configuration>
                 </plugin>
                 <plugin>

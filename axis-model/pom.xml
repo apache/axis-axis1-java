@@ -131,6 +131,20 @@
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
+                    <tags>
+                        <tag>
+                            <name>generated</name>
+                            <placement>X</placement>
+                        </tag>
+                        <tag>
+                            <name>model</name>
+                            <placement>X</placement>
+                        </tag>
+                        <tag>
+                            <name>ordered</name>
+                            <placement>X</placement>
+                        </tag>
+                    </tags>
                     <!-- TODO: check if a newer EMF version produces correct HTML -->
                     <doclint>all,-html</doclint>
                 </configuration>

@@ -16,7 +16,7 @@
 package org.apache.axis.tools.ant.foreach;
 
 /**
- * Inner class stores <item>s with <param> lists
+ * Inner class stores &lt;item&gt;s with &lt;param&gt; lists
  * 
  * @author <a href="mailto:tpv@spamcop.net">Tim Vernum</a>
  * @author Davanum Srinivas

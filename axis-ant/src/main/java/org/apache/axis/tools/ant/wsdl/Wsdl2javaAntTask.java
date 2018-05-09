@@ -59,7 +59,7 @@ import org.apache.tools.ant.types.Environment;
  * classes are generated overwriting anything that exists.
  * <p>
  * The safe way to use this task is to have it generate the java source in
- * a build directory, then have a &lt;copy&gt task selectively copy the
+ * a build directory, then have a &lt;copy&gt; task selectively copy the
  * files you need into a safe location. Again, copying into the source tree
  * is dangerous, but a separate build/src tree is safe. Then include this
  * separate tree in the &lt;javac&gt; task's src attribute to include it in the
