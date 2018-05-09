@@ -10,4 +10,5 @@ cache:
 script: mvn clean verify -Papache-release -Dgpg.skip=true
 notifications:
   email:
-    - java-dev@axis.apache.org
+    # java-dev@axis.apache.org doesn't work here because it's not an address registered on GitHub.
+    - veithen@apache.org
