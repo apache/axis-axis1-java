@@ -8,3 +8,6 @@ cache:
   directories:
     - $HOME/.m2
 script: mvn clean verify -Papache-release -Dgpg.skip=true
+notifications:
+  email:
+    - java-dev@axis.apache.org
