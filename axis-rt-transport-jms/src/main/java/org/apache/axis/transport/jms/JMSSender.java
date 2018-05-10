@@ -44,7 +44,7 @@ public class JMSSender extends BasicHandler
      * invoke() creates an endpoint, sends the request SOAP message, and then
      *   either reads the response SOAP message or simply returns.
      *
-     * @todo hash on something much better than the connection factory
+     * TODO: hash on something much better than the connection factory
      *  something like domain:url:username:password would be adequate
      * @param msgContext
      * @throws AxisFault

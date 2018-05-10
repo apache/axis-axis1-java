@@ -33,7 +33,7 @@ public class Handler
     }
 
     /**
-     * Reassembles the URL string, in the form "jms:/<dest>?prop1=value1&prop2=value2&..."
+     * Reassembles the URL string, in the form "jms:/&lt;dest&gt;?prop1=value1&amp;prop2=value2&amp;..."
      */
     protected String toExternalForm(URL url) {
 

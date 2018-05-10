@@ -24,7 +24,7 @@ import java.net.URLStreamHandler;
  * A stub URLStreamHandler, so the system will recognize our
  * custom URLs as valid.
  * 
- * @author Davanum Srinivas <dims@yahoo.com>
+ * @author Davanum Srinivas &lt;dims@yahoo.com&gt;
  */
 public class Handler extends URLStreamHandler {
     protected URLConnection openConnection(URL u) {

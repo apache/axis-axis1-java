@@ -24,7 +24,7 @@ import org.apache.axis.client.Transport;
 /**
  * A Transport which will cause an invocation via "mail" 
  * 
- * @author Davanum Srinivas <dims@yahoo.com>
+ * @author Davanum Srinivas &lt;dims@yahoo.com&gt;
  */
 public class MailTransport extends Transport {
     public MailTransport() {

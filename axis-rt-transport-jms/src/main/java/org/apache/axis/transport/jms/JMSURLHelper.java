@@ -25,7 +25,7 @@ import java.util.Vector;
 
 /**
  * JMSURLHelper provides access to properties in the URL.
- * The URL must be of the form: "jms:/<destination>?[<property>=<key>&]*"
+ * The URL must be of the form: "jms:/&lt;destination&gt;?[&lt;property&gt;=&lt;key&gt;&amp;]*"
  *
  * @author Ray Chun (rchun@sonicsoftware.com)
  */

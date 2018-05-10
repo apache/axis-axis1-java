@@ -47,7 +47,7 @@ public abstract class JMSEndpoint
      * @param message
      * @param timeout
      * @return
-     * @throws JMSException
+     * @throws Exception
      */
     public byte[] call(byte[] message, long timeout)throws Exception
     {
@@ -61,7 +61,7 @@ public abstract class JMSEndpoint
      * @param timeout
      * @param properties
      * @return
-     * @throws JMSException
+     * @throws Exception
      */
     public byte[] call(byte[] message, long timeout, HashMap properties)
         throws Exception
@@ -75,7 +75,7 @@ public abstract class JMSEndpoint
      * Send a message w/o waiting for a response.
      *
      * @param message
-     * @throws JMSException
+     * @throws Exception
      */
     public void send(byte[] message)throws Exception
     {
@@ -87,7 +87,7 @@ public abstract class JMSEndpoint
      *
      * @param message
      * @param properties
-     * @throws JMSException
+     * @throws Exception
      */
     public void send(byte[] message, HashMap properties)
         throws Exception
@@ -101,7 +101,7 @@ public abstract class JMSEndpoint
      * Register a MessageListener.
      *
      * @param listener
-     * @throws JMSException
+     * @throws Exception
      */
     public void registerListener(MessageListener listener)
         throws Exception
@@ -114,7 +114,7 @@ public abstract class JMSEndpoint
      *
      * @param listener
      * @param properties
-     * @throws JMSException
+     * @throws Exception
      */
     public void registerListener(MessageListener listener, HashMap properties)
         throws Exception

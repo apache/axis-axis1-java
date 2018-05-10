@@ -38,7 +38,7 @@ import java.util.Properties;
  * use.  Its intended uses are for demos, debugging, and performance
  * profiling.
  *
- * @author Davanum Srinivas <dims@yahoo.com>
+ * @author Davanum Srinivas &lt;dims@yahoo.com&gt;
  * @author Rob Jellinghaus (robj@unrealities.com)
  */
 
