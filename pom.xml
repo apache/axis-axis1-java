@@ -187,6 +187,7 @@
                     <version>3.0.0</version>
                     <configuration>
                         <source>${javaVersion}</source>
+                        <quiet>true</quiet>
                     </configuration>
                 </plugin>
                 <plugin>
