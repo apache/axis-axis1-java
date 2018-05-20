@@ -19,8 +19,9 @@
 package org.apache.axis.server.standalone;
 
 import java.util.Iterator;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -51,8 +52,7 @@ final class LimitSessionManager extends HashSessionManager {
     }
     
     private final int maxSessions;
-    private Timer timer;
-    private TimerTask task;
+    private ScheduledExecutorService executor;
 
     LimitSessionManager(int maxSessions) {
         this.maxSessions = maxSessions;
@@ -60,13 +60,12 @@ final class LimitSessionManager extends HashSessionManager {
 
     public void doStart() throws Exception {
         super.doStart();
-        timer = new Timer(true);
-        task = new TimerTask() {
+        executor = new ScheduledThreadPoolExecutor(1);
+        executor.scheduleWithFixedDelay(new Runnable() {
             public void run() {
                 scavenge();
             }
-        };
-        timer.schedule(task, 5000L, 5000L);
+        }, 5, 5, TimeUnit.SECONDS);
     }
     
     protected AbstractSessionManager.Session newSession(HttpServletRequest request) {
@@ -95,8 +94,8 @@ final class LimitSessionManager extends HashSessionManager {
     }
     
     public void doStop() throws Exception {
-        task.cancel();
-        timer.cancel();
+        executor.shutdown();
+        executor.awaitTermination(60, TimeUnit.SECONDS);
         super.doStop();
     }
 }
