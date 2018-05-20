@@ -1181,12 +1181,13 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                         sb.append(':');
                         sb.append(map.getPrefix());
                     }
-                    if ((vecQNames==null) || (vecQNames.indexOf(sb.toString())==-1)) {
+                    String qname = sb.toString();
+                    if ((vecQNames==null) || (vecQNames.indexOf(qname)==-1)) {
                         writer.write(' ');
-                        sb.append("=\"");
-                        sb.append(map.getNamespaceURI());
-                        sb.append('"');
-                        writer.write(sb.toString());
+                        writer.write(qname);
+                        writer.write("=\"");
+                        getEncoder().writeEncoded(writer, map.getNamespaceURI());
+                        writer.write('"');
                     }
                 }
             }

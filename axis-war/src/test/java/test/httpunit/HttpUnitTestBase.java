@@ -22,6 +22,7 @@ import com.meterware.httpunit.*;
 import java.io.*;
 import java.net.MalformedURLException;
 
+import org.apache.axis.war.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -38,14 +39,12 @@ public class HttpUnitTestBase extends TestCase {
         super(s);
     }
 
-    private static String URL_PROPERTY="test.functional.webapp.url";
     /**
      *  The JUnit setup method
      *
      */
     public void setUp() throws Exception {
-        url=System.getProperty(URL_PROPERTY);
-        assertNotNull(URL_PROPERTY+" not set",url);
+        url = Utils.getWebappUrl();
         HttpUnitOptions.setExceptionsThrownOnErrorStatus(true);
         HttpUnitOptions.setMatchesIgnoreCase(true);
         HttpUnitOptions.setParserWarningsEnabled(true);
