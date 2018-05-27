@@ -3,11 +3,15 @@ language: java
 # There are test cases that use ImageIO with JPEG and that only work on Oracle JDK.
 jdk:
   - oraclejdk8
-install: echo NOOP Skipping pre-fetch of Maven dependencies
+install: true
+script: '[ "$TRAVIS_REPO_SLUG" == apache/axis1-java ] && [ "$TRAVIS_BRANCH" == trunk ] && [ "$TRAVIS_PULL_REQUEST" == false ] && goal=deploy || goal=verify ; mvn -B -s .travis-settings.xml -Papache-release -Dgpg.skip=true $goal'
+env:
+  global:
+    - secure: "rd5q/f6mA88heUgXm88Aae8q6PTwKp9rEJtQZihJRPWgnguJp/yPNXCyp0sdtL6ucPW8AXMlcuEUqNv12Y1orxG9zyDkGQ3IWazGB6XQ+feOG1MqXpnUz2DMv0KCqCTbxGyI7Quk5E/ghjhGdfxLETazQJaq4w5ARIxb2r0dyts="
+    - secure: "QVsD6fyEdJDBMc8Czap41kkmYNMRQndDL+ZYnvZvrl9x7SPpiUScIW7H1PM3C9Gsd1OZFecVJz1pqplKa0d1/WEkeqlyNFrKNS+jCPbn1ys05Pdq5/85aPfJC9XJu5MOjKn2wjW0Xe2xNpK5V/r13T1qnVAjUJYMfJzM1rogKAM="
 cache:
   directories:
     - $HOME/.m2
-script: mvn -B clean verify -Papache-release -Dgpg.skip=true
 notifications:
   email:
     # java-dev@axis.apache.org doesn't work here because it's not an address registered on GitHub.
