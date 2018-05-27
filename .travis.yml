@@ -4,7 +4,7 @@ language: java
 jdk:
   - oraclejdk8
 install: true
-script: '[ "$TRAVIS_REPO_SLUG" == apache/axis1-java ] && [ "$TRAVIS_BRANCH" == trunk ] && [ "$TRAVIS_PULL_REQUEST" == false ] && goal=deploy || goal=verify ; mvn -B -s .travis-settings.xml -Papache-release -Dgpg.skip=true $goal'
+script: '[ "$TRAVIS_REPO_SLUG" == apache/axis1-java ] && [ "$TRAVIS_BRANCH" == trunk ] && [ "$TRAVIS_PULL_REQUEST" == false ] && goal=deploy || goal=install ; mvn -B -s .travis-settings.xml -Papache-release -Dgpg.skip=true $goal site'
 env:
   global:
     - secure: "rd5q/f6mA88heUgXm88Aae8q6PTwKp9rEJtQZihJRPWgnguJp/yPNXCyp0sdtL6ucPW8AXMlcuEUqNv12Y1orxG9zyDkGQ3IWazGB6XQ+feOG1MqXpnUz2DMv0KCqCTbxGyI7Quk5E/ghjhGdfxLETazQJaq4w5ARIxb2r0dyts="

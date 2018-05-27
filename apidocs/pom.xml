@@ -35,6 +35,9 @@
             <url>${baseSiteUrl}/apiDocs</url>
         </site>
     </distributionManagement>
+    <properties>
+        <javaVersion>1.5</javaVersion>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -49,11 +52,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis-jaxrpc</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis-rt-compat</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -176,6 +174,12 @@
                     <bottom>Copyright &#169; {organizationName}. All Rights Reserved.</bottom>
                     <!-- doctitle only appears in the summary and we should include the version there -->
                     <doctitle>Apache Axis ${project.version}</doctitle>
+                    <tags>
+                        <tag>
+                            <name>ant.task</name>
+                            <placement>X</placement>
+                        </tag>
+                    </tags>
                 </configuration>
             </plugin>
             <plugin>
