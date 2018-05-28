@@ -280,7 +280,7 @@
                 <plugin>
                     <groupId>com.github.veithen.filecheck</groupId>
                     <artifactId>filecheck-maven-plugin</artifactId>
-                    <version>0.1-SNAPSHOT</version>
+                    <version>0.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
