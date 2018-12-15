@@ -260,6 +260,15 @@
                     </configuration>
                 </plugin>
                 <plugin>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>axis-server-maven-plugin</artifactId>
+                    <version>${project.version}</version>
+                    <configuration>
+                        <!-- Enable the JaCoCo agent. -->
+                        <argLine>${argLine}</argLine>
+                    </configuration>
+                </plugin>
+                <plugin>
                     <groupId>org.mortbay.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
                     <version>7.5.4.v20111024</version>
