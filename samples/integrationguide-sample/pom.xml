@@ -64,6 +64,7 @@
                                 <mkdir dir="${project.build.directory}/work/example1" />
                                 <!-- Need fork="true" here because WSDL2Java calls System.exit -->
                                 <java classname="samples.integrationGuide.example1.MyWSDL2Java" fork="true" classpathref="maven.test.classpath">
+                                    <jvmarg line="${argLine}"/>
                                     <arg value="src/test/wsdl/hello.wsdl" />
                                     <arg value="-o" />
                                     <arg value="${project.build.directory}/work/example1" />
@@ -71,6 +72,7 @@
                                 
                                 <mkdir dir="${project.build.directory}/work/example2" />
                                 <java classname="samples.integrationGuide.example2.WSDL2Useless" fork="true" classpathref="maven.test.classpath">
+                                    <jvmarg line="${argLine}"/>
                                     <arg value="src/test/wsdl/hello.wsdl" />
                                     <arg value="-o" />
                                     <arg value="${project.build.directory}/work/example2" />

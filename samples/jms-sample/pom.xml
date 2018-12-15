@@ -165,6 +165,7 @@
                                 <echo message="Executing samples.jms.JMSTest ..."/>
                                 <java classname="samples.jms.JMSTest" fork="true" failonerror="true">
                                     <classpath refid="maven.test.classpath"/>
+                                    <jvmarg line="${argLine}"/>
                                     <sysproperty key="axis.ServerConfigFile" file="src/main/wsdd/server-config.wsdd"/>
                                     <arg value="-c"/>
                                     <arg value="${project.build.directory}/conf/activemq-connection-factory.properties"/>
@@ -175,6 +176,7 @@
                                 <echo message="Executing samples.jms.dii.JMSURLTest ..."/>
                                 <java classname="samples.jms.dii.JMSURLTest" fork="true" failonerror="true">
                                     <classpath refid="maven.test.classpath"/>
+                                    <jvmarg line="${argLine}"/>
                                     <sysproperty key="axis.ServerConfigFile" file="src/main/wsdd/server-config.wsdd"/>
                                     <arg value="-c"/>
                                     <arg value="${project.build.directory}/conf/activemq-connection-factory.properties"/>
@@ -187,6 +189,7 @@
                                 <echo message="Executing samples.jms.stub.JMSURLStubTest ..."/>
                                 <java classname="samples.jms.stub.JMSURLStubTest" fork="true" failonerror="true">
                                     <classpath refid="maven.test.classpath"/>
+                                    <jvmarg line="${argLine}"/>
                                     <sysproperty key="axis.ServerConfigFile" file="src/main/wsdd/server-config.wsdd"/>
                                     <sysproperty key="axis.ClientConfigFile" file="src/main/wsdd/client-config.wsdd"/>
                                     <arg value="-c"/>
