@@ -254,6 +254,10 @@
                 <plugin>
                     <artifactId>maven-invoker-plugin</artifactId>
                     <version>1.7</version>
+                    <configuration>
+                        <!-- Enable the JaCoCo agent. -->
+                        <mavenOpts>${argLine}</mavenOpts>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.mortbay.jetty</groupId>
