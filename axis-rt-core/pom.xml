@@ -127,28 +127,28 @@
                 </executions>
             </plugin>
             <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
+                <groupId>com.github.veithen.alta</groupId>
+                <artifactId>alta-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>generate-resources</phase>
                         <goals>
-                            <goal>copy</goal>
+                            <goal>generate-properties</goal>
                         </goals>
                         <configuration>
-                            <artifactItems>
-                                <artifactItem>
+                            <name>compile.bootclasspath</name>
+                            <value>%file%</value>
+                            <separator>${path.separator}</separator>
+                            <artifacts>
+                                <artifact>
                                     <groupId>xerces</groupId>
                                     <artifactId>xmlParserAPIs</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>${project.groupId}</groupId>
+                                </artifact>
+                                <artifact>
+                                    <groupId>org.apache.axis</groupId>
                                     <artifactId>axis-saaj</artifactId>
                                     <version>${project.version}</version>
-                                </artifactItem>
-                            </artifactItems>
-                            <overWrite>true</overWrite>
-                            <outputDirectory>${project.build.directory}/endorsed</outputDirectory>
-                            <stripVersion>true</stripVersion>
+                                </artifact>
+                            </artifacts>
                         </configuration>
                     </execution>
                 </executions>
@@ -158,7 +158,7 @@
                 <configuration>
                     <compilerArgument>
                         <!-- Necessary because we only support DOM 2 and SAAJ 1.2 -->
-                        -Xbootclasspath/p:${project.build.directory}/endorsed/xmlParserAPIs.jar${path.separator}${project.build.directory}/endorsed/axis-saaj.jar
+                        -Xbootclasspath/p:${compile.bootclasspath}
                     </compilerArgument>
                 </configuration>
             </plugin>
