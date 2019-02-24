@@ -819,7 +819,7 @@ public class XMLUtils {
         uconn.setDefaultUseCaches(false);
         uconn.setDoInput(true);
         uconn.setDoOutput(false);
-        uconn.setInstanceFollowRedirects(true);
+        uconn.setInstanceFollowRedirects(false);
         uconn.setUseCaches(false);
 
         // username/password info in the URL overrides passed in values
