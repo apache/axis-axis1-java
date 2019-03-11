@@ -89,6 +89,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <packagingExcludes>WEB-INF/lib/soapmonitor-applet-*.jar</packagingExcludes>
+                    <packagingExcludes>*.jws</packagingExcludes>
                     <overlays>
                         <overlay>
                             <groupId>${project.groupId}</groupId>
