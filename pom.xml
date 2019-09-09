@@ -373,28 +373,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>animal-sniffer-maven-plugin</artifactId>
-                <!-- Note: 1.9 contains a call to a Java 7 specific method (java.nio.CharBuffer.subSequence(II)Ljava/nio/CharBuffer;)
-                           that is triggered when an undefined reference is found. This breaks error reporting on Java 5/6. -->
-                <version>1.8</version>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <configuration>
-                            <signature>
-                                <groupId>org.codehaus.mojo.signature</groupId>
-                                <artifactId>${signatureArtifactId}</artifactId>
-                                <version>${signatureVersion}</version>
-                            </signature>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <!-- This serves two purposes:
                       (1) we want to generate source JARs for all builds, not just release builds;
                       (2) we need (some of) the source JARs to generate the Javadoc in the apidocs module. -->
