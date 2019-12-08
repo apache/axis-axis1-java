@@ -152,19 +152,20 @@ public class FileProvider extends DelegatingWSDDEngineConfiguration {
     public void configureEngine(AxisEngine engine)
         throws ConfigurationException {
         try {
-            if (getInputStream() == null) {
+            InputStream configFileInputStream = getInputStream();
+            if (configFileInputStream == null) {
                 try {
-                    setInputStream(new FileInputStream(configFile));
+                    configFileInputStream = new FileInputStream(configFile);
                 } catch (Exception e) {
                     // Ignore and continue
                 }
             }
-            if (getInputStream() == null && searchClasspath) {
+            if (configFileInputStream == null && searchClasspath) {
                 // Attempt to load the file from the classpath
-                setInputStream(ClassUtils.getResourceAsStream(filename, engine.getClass().getClassLoader()));
+                configFileInputStream = ClassUtils.getResourceAsStream(filename, engine.getClass().getClassLoader());
             }
 
-            if (getInputStream() == null) {
+            if (configFileInputStream == null) {
                 // Load the default configuration. This piece of code provides compatibility with Axis 1.4,
                 // which ends up loading org/apache/axis/(client|server)/(client|server)-config.wsdd if
                 // (1) filename is (client|server)-config.wsdd;
@@ -184,7 +185,7 @@ public class FileProvider extends DelegatingWSDDEngineConfiguration {
                 deployment = defaultConfig.getDeployment();
             } else {
                 WSDDDocument doc = new WSDDDocument(XMLUtils.
-                                                    newDocument(getInputStream()));
+                                                    newDocument(configFileInputStream));
                 deployment = doc.getDeployment();
     
                 deployment.configureEngine(engine);
