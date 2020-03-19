@@ -37,11 +37,9 @@ public class DefaultHTTPTransportClientProperties
      * @see org.apache.axis.components.net.TransportClientProperties#getProxyHost()
      */
     public String getProxyHost() {
-        if (proxyHost == null) {
-            proxyHost = AxisProperties.getProperty("http.proxyHost");
-            if (proxyHost == null)
-                proxyHost = emptyString;
-        }
+        proxyHost = AxisProperties.getProperty("http.proxyHost");
+        if (proxyHost == null)
+            proxyHost = emptyString;
         return proxyHost;
     }
 
@@ -49,11 +47,9 @@ public class DefaultHTTPTransportClientProperties
      * @see org.apache.axis.components.net.TransportClientProperties#getNonProxyHosts()
      */
     public String getNonProxyHosts() {
-        if (nonProxyHosts == null) {
-            nonProxyHosts = AxisProperties.getProperty("http.nonProxyHosts");
-            if (nonProxyHosts == null)
-                nonProxyHosts = emptyString;
-        }
+        nonProxyHosts = AxisProperties.getProperty("http.nonProxyHosts");
+        if (nonProxyHosts == null)
+            nonProxyHosts = emptyString;
         return nonProxyHosts;
     }
 
@@ -61,11 +57,9 @@ public class DefaultHTTPTransportClientProperties
      * @see org.apache.axis.components.net.TransportClientProperties#getProxyPort()
      */
     public String getProxyPort() {
-        if (proxyPort == null) {
-            proxyPort = AxisProperties.getProperty("http.proxyPort");
-            if (proxyPort == null)
-                proxyPort = emptyString;
-        }
+        proxyPort = AxisProperties.getProperty("http.proxyPort");
+        if (proxyPort == null)
+            proxyPort = emptyString;
         return proxyPort;
     }
 
@@ -73,11 +67,9 @@ public class DefaultHTTPTransportClientProperties
      * @see org.apache.axis.components.net.TransportClientProperties#getProxyUser()
      */
     public String getProxyUser() {
-        if (proxyUser == null) {
-            proxyUser = AxisProperties.getProperty("http.proxyUser");
-            if (proxyUser == null)
-                proxyUser = emptyString;
-        }
+        proxyUser = AxisProperties.getProperty("http.proxyUser");
+        if (proxyUser == null)
+            proxyUser = emptyString;
         return proxyUser;
     }
 
@@ -85,11 +77,9 @@ public class DefaultHTTPTransportClientProperties
      * @see org.apache.axis.components.net.TransportClientProperties#getProxyPassword()
      */
     public String getProxyPassword() {
-        if (proxyPassword == null) {
-            proxyPassword = AxisProperties.getProperty("http.proxyPassword");
-            if (proxyPassword == null)
-                proxyPassword = emptyString;
-        }
+        proxyPassword = AxisProperties.getProperty("http.proxyPassword");
+        if (proxyPassword == null)
+            proxyPassword = emptyString;
         return proxyPassword;
     }
 }
