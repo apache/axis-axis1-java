@@ -76,9 +76,9 @@
         </extensions>
         <plugins>
             <plugin>
-                <groupId>com.github.veithen.cosmos</groupId>
+                <groupId>com.github.veithen.maven</groupId>
                 <artifactId>emf-maven-plugin</artifactId>
-                <version>0.1-SNAPSHOT</version>
+                <version>0.1.0-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <goals>
