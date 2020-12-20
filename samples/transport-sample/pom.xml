@@ -53,6 +53,14 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>com.github.veithen.maven</groupId>
+                <artifactId>hermetic-maven-plugin</artifactId>
+                <configuration>
+                    <!-- TODO: the sample transport writes files to the project root directory -->
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <executions>
                     <execution>

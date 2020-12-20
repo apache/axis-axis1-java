@@ -1543,6 +1543,10 @@
                                 <java.awt.headless>true</java.awt.headless>
                                 <test.functional.ServicePort>${test.functional.ServicePort}</test.functional.ServicePort>
                             </systemPropertyVariables>
+                            <environmentVariables>
+                                <!-- TODO: some tests fail in specific time zones (e.g. Europe/London) -->
+                                <TZ>PST8PDT</TZ>
+                            </environmentVariables>
                         </configuration>
                     </execution>
                 </executions>
