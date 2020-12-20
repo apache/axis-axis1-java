@@ -27,7 +27,7 @@ import java.util.HashMap;
  */
 public class TransportClientPropertiesFactory {
     protected static Log log =
-            LogFactory.getLog(TransportClientPropertiesFactory.class.getName());
+            LogFactory.getLog(SocketFactoryFactory.class.getName());
     
     private static HashMap cache = new HashMap();
     private static HashMap defaults = new HashMap();
