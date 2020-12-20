@@ -127,6 +127,7 @@
                                 <resourceBase>src/main/webapp</resourceBase>
                                 <resourceBase>${project.build.directory}/webapp</resourceBase>
                             </resourceBases>
+                            <argLine>${argLine} -Daxis.attachments.Directory=${project.build.directory}/tmp/attachments</argLine>
                         </configuration>
                     </execution>
                     <execution>
