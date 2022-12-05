@@ -47,7 +47,7 @@
         <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
-            <version>1.0.0</version>
+            <version>3.9.0</version>
         </dependency>
     </dependencies>
 </project>
