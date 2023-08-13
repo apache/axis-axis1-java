@@ -1,6 +1,5 @@
 dist: trusty
 language: java
-# There are test cases that use ImageIO with JPEG and that only work on Oracle JDK.
 jdk:
   - oraclejdk8
 install: true

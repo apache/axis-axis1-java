@@ -37,7 +37,7 @@ public class ImageDataSource implements DataSource {
     protected static Log log =
         LogFactory.getLog(ImageDataSource.class.getName());
     
-    public static final String CONTENT_TYPE = "image/jpeg";
+    public static final String CONTENT_TYPE = "image/png";
 
     private final String name;
     private final String contentType;
