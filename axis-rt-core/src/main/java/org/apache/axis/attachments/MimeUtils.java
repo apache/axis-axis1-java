@@ -249,7 +249,7 @@ public class MimeUtils {
 
             if(sendType == Attachments.SEND_TYPE_MTOM) {
                 multipart = new javax.mail.internet.MimeMultipart(
-                        "related;type=\"application/xop+xml\"; start=\"<" + rootCID + ">\"; start-info=\"text/xml; charset=utf-8\"");
+                        "related;type=\"application/xop+xml\"; start=\"<" + rootCID + ">\"; start-info=\"text/xml\"; charset=\"utf-8\"");
             } else {
                 multipart = new javax.mail.internet.MimeMultipart(
                         "related; type=\"text/xml\"; start=\"<" + rootCID + ">\"");
