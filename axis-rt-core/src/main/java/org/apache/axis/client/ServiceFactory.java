@@ -112,7 +112,7 @@ public class ServiceFactory extends javax.xml.rpc.ServiceFactory
         if (context != null) {
             String name = (String)environment.get("jndiName");
 
-	    if(name!=null && (name.toUpperCase().indexOf("LDAP")!=-1 || name.toUpperCase().indexOf("RMI")!=-1 || name.toUpperCase().indexOf("JMS")!=-1 || name.toUpperCase().indexOf("JMX")!=-1) || name.toUpperCase().indexOf("JRMP")!=-1 || name.toUpperCase().indexOf("JAVA")!=-1 || name.toUpperCase().indexOf("DNS")!=-1 || name.toUpperCase().indexOf("IIOP")!=-1 || name.toUpperCase().indexOf("CORBANAME")!=-1) {
+	    if(name!=null && (name.toUpperCase().indexOf("LDAP")!=-1 || name.toUpperCase().indexOf("RMI")!=-1 || name.toUpperCase().indexOf("JMS")!=-1 || name.toUpperCase().indexOf("JMX")!=-1 || name.toUpperCase().indexOf("JRMP")!=-1 || name.toUpperCase().indexOf("JAVA")!=-1 || name.toUpperCase().indexOf("DNS")!=-1 || name.toUpperCase().indexOf("IIOP")!=-1 || name.toUpperCase().indexOf("CORBANAME")!=-1)) {
                 log.warn("returning null, jndiName received by ServiceFactory.getService() is not supported by this method: " + name);
 	        return null;
             }
