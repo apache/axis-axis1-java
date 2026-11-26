@@ -1,2 +1,0 @@
-# Restore this test after fixing the MIME attachment round trip.
-test.functional.TestAttachmentsSample#testAttachments2

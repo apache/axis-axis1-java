@@ -114,7 +114,6 @@
                             <includes>
                                 <include>**/Test*.java</include>
                             </includes>
-                            <excludesFile>${project.basedir}/src/test/failsafe-excludes.txt</excludesFile>
                             <systemPropertyVariables>
                                 <test.functional.ServicePort>${test.functional.ServicePort}</test.functional.ServicePort>
                             </systemPropertyVariables>
