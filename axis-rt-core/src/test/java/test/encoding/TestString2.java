@@ -87,7 +87,7 @@ public class TestString2 extends TestCase {
     }
     
     public void testFrenchAccents2() throws Exception {
-        runtest("Une chaîne avec des caractères accentués");
+        runtest("Une cha\u00eene avec des caract\u00e8res accentu\u00e9s");
     }
     
     public void testGermanUmlauts() throws Exception {

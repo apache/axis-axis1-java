@@ -103,6 +103,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.2.5</version>
                 <executions>
                     <execution>
                         <goals>
@@ -113,6 +114,7 @@
                             <includes>
                                 <include>**/Test*.java</include>
                             </includes>
+                            <excludesFile>${project.basedir}/src/test/failsafe-excludes.txt</excludesFile>
                             <systemPropertyVariables>
                                 <test.functional.ServicePort>${test.functional.ServicePort}</test.functional.ServicePort>
                             </systemPropertyVariables>

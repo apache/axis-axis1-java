@@ -118,6 +118,26 @@
                             </source>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>generate-compile-bootclasspath</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>
+                                // The reactor supplies a classes directory before SAAJ is packaged.
+                                def saaj = project.artifacts.find {
+                                    it.groupId == 'org.apache.axis' &amp;&amp; it.artifactId == 'axis-saaj'
+                                }
+                                if (saaj == null || saaj.file == null || !saaj.file.exists()) {
+                                    throw new IllegalStateException('Unable to resolve the Axis SAAJ API')
+                                }
+                                project.properties['compile.bootclasspath'] =
+                                        project.properties['compile.xml.bootclasspath'] + File.pathSeparator + saaj.file.absolutePath
+                            </source>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -129,18 +149,13 @@
                             <goal>generate-properties</goal>
                         </goals>
                         <configuration>
-                            <name>compile.bootclasspath</name>
+                            <name>compile.xml.bootclasspath</name>
                             <value>%file%</value>
                             <separator>${path.separator}</separator>
                             <artifacts>
                                 <artifact>
                                     <groupId>xerces</groupId>
                                     <artifactId>xmlParserAPIs</artifactId>
-                                </artifact>
-                                <artifact>
-                                    <groupId>org.apache.axis</groupId>
-                                    <artifactId>axis-saaj</artifactId>
-                                    <version>${project.version}</version>
                                 </artifact>
                             </artifacts>
                         </configuration>

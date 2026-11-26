@@ -319,6 +319,7 @@
                 <configuration>
                     <source>${javaVersion}</source>
                     <target>${javaVersion}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
             <plugin>
@@ -433,6 +434,40 @@
                         </goals>
                         <configuration>
                             <allowCrossProjectAccess>true</allowCrossProjectAccess>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>grant-jdk-extension-access</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- The Windows extension class loader uses URL-escaped paths for JDK extension JARs. -->
+                                <pathconvert property="jdk.ext.dir" targetos="unix">
+                                    <path>
+                                        <pathelement location="${java.home}/lib/ext"/>
+                                    </path>
+                                </pathconvert>
+                                <echo file="${project.build.directory}/jdk-ext-dir.txt" message="${jdk.ext.dir}"/>
+                                <replaceregexp file="${project.build.directory}/jdk-ext-dir.txt"
+                                               match=" " replace="%20" byline="true"/>
+                                <loadfile property="encoded.java.ext.dir"
+                                          srcFile="${project.build.directory}/jdk-ext-dir.txt">
+                                    <filterchain>
+                                        <striplinebreaks/>
+                                    </filterchain>
+                                </loadfile>
+                                <echo file="${project.build.directory}/test.policy" append="true" encoding="UTF-8"
+                                      message="&#10;grant {&#10;  permission java.io.FilePermission &quot;${encoded.java.ext.dir}/-&quot;, &quot;read&quot;;&#10;};&#10;"/>
+                                <delete file="${project.build.directory}/jdk-ext-dir.txt"/>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>

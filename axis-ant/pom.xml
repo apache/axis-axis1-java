@@ -73,9 +73,9 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
-                        <!-- We run this in process-test-classes so that we can refer to test classes
-                             (e.g. in java2wsdl), but also run unit tests that verify the output. -->
-                        <phase>process-test-classes</phase>
+                        <!-- The default test compilation runs first in this phase, so java2wsdl
+                             can use test classes before generated sources are compiled. -->
+                        <phase>test-compile</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>

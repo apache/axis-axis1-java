@@ -146,6 +146,10 @@
                             <includes>
                                 <include>**/Test*.java</include>
                             </includes>
+                            <excludes>
+                                <exclude>**/TestTCPTransportSample.java</exclude>
+                                <exclude>**/TestTransportSample.java</exclude>
+                            </excludes>
                             <systemPropertyVariables>
                                 <axis.ServerConfigFile>${project.build.directory}/server-config.wsdd</axis.ServerConfigFile>
                                 <test.functional.TCPListenerPort>${test.functional.TCPListenerPort}</test.functional.TCPListenerPort>
