@@ -1,0 +1,24 @@
+version: '3'
+services:
+  mvn:
+    image: fs-pcm-docker.artifactory.paymentscommon.pub.tds.tieto.com/tieto/mvn:3.8.4-jdk-8-latest
+    environment:
+      MAVEN_OPTS: '-Xmx1024M -Xss128M -XX:MetaspaceSize=512M -XX:MaxMetaspaceSize=1024M'
+      MAVEN_CONFIG: /tmp
+    user: ${CURRENT_UID}:${CURRENT_GID}
+    command: mvn -B -Duser.home=/tmp ${MVN_CMD}
+    working_dir: /build
+    volumes:
+      - .:/build
+      - ~/.m2/repository:/tmp/.m2/repository
+  mvn17:
+    image: fs-pcm-docker.artifactory.paymentscommon.pub.tds.tieto.com/tieto/mvn:3.9.11-jdk-25
+    environment:
+      MAVEN_OPTS: '-Xmx1024M -Xss128M -XX:MetaspaceSize=512M -XX:MaxMetaspaceSize=1024M'
+      MAVEN_CONFIG: /tmp
+    user: ${CURRENT_UID}:${CURRENT_GID}
+    command: mvn -B -Duser.home=/tmp ${MVN_CMD}
+    working_dir: /build
+    volumes:
+      - .:/build
+      - ~/.m2/repository:/tmp/.m2/repository
