@@ -44,7 +44,7 @@ public class RamServiceTestCase extends junit.framework.TestCase {
             CreditCard cc = new CreditCard();
             cc.setName("NAME");
             cc.setNumber("NUMBER");
-            cc.setExpires(new java.util.Date());
+            cc.setExpires(java.sql.Date.valueOf("2000-01-01"));
             cc.setPostalCode("PC");
             input[0].setCreditCard(cc);
 
@@ -61,8 +61,7 @@ public class RamServiceTestCase extends junit.framework.TestCase {
 
             Response[] output = binding.validate(input);
             java.util.Date resDate = output[0].getAccountingDate();
-            java.util.Date now = new java.util.Date();
-            assertTrue("Time check failed.  Result date = " + resDate + ", current time = " + now, resDate.before(now));
+            assertEquals("Accounting date", java.sql.Date.valueOf("2000-01-01"), resDate);
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);

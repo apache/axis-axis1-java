@@ -16,7 +16,8 @@ public class RamSoapBindingImpl implements Ram{
         }
         Response[] response = new Response[1];
         response[0] = new Response();
-        response[0].setAccountingDate(new java.util.Date());
+        // Use a fixed xsd:date rather than comparing date-only values with the current time.
+        response[0].setAccountingDate(java.sql.Date.valueOf("2000-01-01"));
         response[0].setAuthorization("AUTH");
         response[0].setHostResponseCode("HRC");
         response[0].setHostResponseMessage("HRM");
